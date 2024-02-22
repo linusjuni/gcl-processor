@@ -1,0 +1,10 @@
+bin/
+obj/
+.bins/
+
+Lexer.fs
+Grammar.fs
+Grammar.fsi
+
+.fake
+.ionide
