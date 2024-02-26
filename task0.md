@@ -16,7 +16,7 @@ The goal of this task is to complete the calculator.
 
 > **Relevant files in your group's repository:** 
 > 
-> `Parse.fs; Lexer.fsl; Calculator.fsy; AST.fs`
+> `Calculator.fs; Lexer.fsl; Grammar.fsy; AST.fs`
 
 Launch inspectify:
 
@@ -31,7 +31,9 @@ Once Inspectify has opened in your browser, click on `Calculator`. Inspectify wi
 
 ## Hints
 - Open file `Calculator.fs` and complete function `evaluate`.
-- Use pattern matching to implement `evaluate` recursively. File `AST.fs` contains the definition of type `expr`, which you should follow to identify the cases neded in the pattern maching.
+- Use pattern matching to implement `evaluate` recursively.
+- File `AST.fs` contains the definition of type `expr`, which you should follow to identify the cases neded in the pattern maching.
+- File `Grammar.fsy` describes the grammar of arithmetic expression and how expressions are built as values of type `expr`.
 - Sketch of a possible solution:
 
 ```
