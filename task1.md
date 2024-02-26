@@ -49,7 +49,7 @@ Once inspectify has opened in your browser, click on `Parse` and start working o
     - `AST.fs`: add one type for each non-terminal symbol of the grammar, define the constructors of the type.
     - `Grammar.fsy`: add new non-terminals with their productions, add token declarations, and add the code generation part (based on your new types). You may need to specify precedence and associativity of some operators in the parser generator language, or by applying some of the grammar transformations seen in class. 
     - `Lexer.fsl`: add rules to define the new tokens. 
-    - `Parser.fs`: you need to implement function 'prettyPrint', which, given the AST of the parsed GCL program, generates the code as a string.
+    - `Parser.fs`: you need to implement function `prettyPrint`, which, given the AST of the parsed GCL program, generates the code as a string.
 
 ## Feedback & Evaluation
 
