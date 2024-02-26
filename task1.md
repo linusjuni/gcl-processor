@@ -7,13 +7,10 @@
 
 The detailed rules of the mandatory assignment are found [here](README.md).
 
-NOTE: ensure that the master branch of your repository is updated with
+NOTE: ensure that the master branch of your repository is updated with:
 
-```
-git remote add upstream https://github.com/team-checkr/fsharp-starter
-git checkout master
-git pull upstream main
-```
+- MacOS, Linux: `./update.sh`
+- Windows: `update.ps1`
 
 ## Goals
 
