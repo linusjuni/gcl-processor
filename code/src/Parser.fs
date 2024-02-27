@@ -27,8 +27,9 @@ let parse parser src =
         Error(ParseError(pos, lastToken, e))
 
 let rec prettyPrint ast : string =
-    match ast with
-    | Skip -> "Skip"
+    match ast with 
+    | Skip -> "skip"
+    | Program(c, c') -> sprintf "%s; %s" (prettyPrint c) (prettyPrint c')
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands

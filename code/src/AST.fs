@@ -13,3 +13,4 @@ type expr =
 
 type command =
     | Skip
+    | Program of (command * command)

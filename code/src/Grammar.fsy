@@ -6,7 +6,7 @@ open AST
 // Declare the tokens (terminal symbols)
 %token <int> NUM
 %token TIMES DIV PLUS MINUS POW LPAR RPAR EOF
-%token SKIP
+%token SKIP PROGRAM
 // NOTE: the actual formats of these tokens are defined in the lexer file
 //       as regular expressions
 
@@ -60,5 +60,6 @@ expression:
 
 command:
   | SKIP                           { Skip }
+  | command PROGRAM command        { Program($1,$3) } 
 
 %%
