@@ -8,9 +8,10 @@ open System.Text.Json
 let main (args) =
     match args |> List.ofArray with
     | ["Calculator"; input] ->
-        let input = JsonSerializer.Deserialize<Io.Calculator.Input> input
-        let output: Io.Calculator.Output = Calculator.analysis input
-        Console.WriteLine("{0}", JsonSerializer.Serialize output)
+        // let input = JsonSerializer.Deserialize<Io.Calculator.Input> input
+        // let output: Io.Calculator.Output = Calculator.analysis input
+        // Console.WriteLine("{0}", JsonSerializer.Serialize output)
+        Console.WriteLine("Removed")
 
         0
     | ["Parser"; input ] ->
