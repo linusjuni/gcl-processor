@@ -27,12 +27,12 @@ let parse parser src =
         Error(ParseError(pos, lastToken, e))
 
 let rec prettyPrint ast : string =
-   // TODO: start here
-   failwith "GCL parser not yet implemented"
+    match ast with
+    | Skip -> "Skip"
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
-    match parse Grammar.start_expression input.commands with
+    match parse Grammar.start_command input.commands with
         | Ok ast ->
             Console.Error.WriteLine("> {0}", ast)
             { pretty = prettyPrint ast }

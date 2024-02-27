@@ -10,3 +10,6 @@ type expr =
     | MinusExpr of (expr * expr)
     | PowExpr of (expr * expr)
     | UMinusExpr of (expr)
+
+type command =
+    | Skip
