@@ -5,8 +5,6 @@ NOTE: ensure that the master branch of your repository is updated with:
 - MacOS, Linux: `./update.sh`
 - Windows: `update.ps1`
 
-Hi Felipe!
-
 ## Goals
 
 The goal of this task is to complete the calculator.
