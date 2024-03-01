@@ -19,6 +19,7 @@ type bool =
     | And of (bool * bool)
     | Or of (bool * bool)
     | Not of (bool)
+    | ShortAnd of (bool * bool)
 
 type command =
     | Skip

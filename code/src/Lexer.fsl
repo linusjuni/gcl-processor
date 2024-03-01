@@ -42,6 +42,7 @@ rule tokenize = parse
 | "false"       { FALSE }
 | '&'           { AND }
 | '|'           { OR }
+| "&&"          { SHORTAND }
 | "if"          { IF }
 | "fi"          { FI }
 | "do"          { DO }
