@@ -50,15 +50,16 @@ let rec prettyPrintBool ast : string =
 let rec prettyPrint (ast : command) : string =
     match ast with 
     | Skip -> "skip"
-    | Program(c, c') -> sprintf "%s; %s" (prettyPrint c) (prettyPrint c')
     | If(gc) -> sprintf "if %s \nfi" (prettyPrintGCommand gc)
     | Do(gc) -> sprintf "do %s \nod" (prettyPrintGCommand gc)
+    | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c) (prettyPrint c')
     | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
     | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
     
 and prettyPrintGCommand (ast : gcommand) : string = 
     match ast with
     | Implies(b, c) -> sprintf "%s -> \n   %s" (prettyPrintBool b) (prettyPrint c)
+
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
