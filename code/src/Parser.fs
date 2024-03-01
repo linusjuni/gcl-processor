@@ -36,7 +36,7 @@ let rec printExpr expr =
     | PlusExpr(x, y) -> sprintf "(%s + %s)" (printExpr x) (printExpr y)
     | MinusExpr(x, y) -> sprintf "(%s - %s)" (printExpr x) (printExpr y)
     | PowExpr(x, y) -> sprintf "(%s ^ %s)" (printExpr x) (printExpr y)
-    | UMinusExpr(x) -> sprintf "(- %s)" (printExpr x)
+    | UMinusExpr(x) -> sprintf "-%s" (printExpr x)
 
 let rec prettyPrintBool ast : string =
     match ast with
