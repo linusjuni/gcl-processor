@@ -33,3 +33,4 @@ rule tokenize = parse
 | ')'           { RPAR }
 | eof           { EOF }
 | "skip"        { SKIP }
+| ";"           { PROGRAM }
