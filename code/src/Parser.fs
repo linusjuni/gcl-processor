@@ -30,6 +30,7 @@ let rec printExpr expr =
     match expr with
     | Num(x) -> string x
     | Var(x) -> x
+    | ListElement(x, y) -> sprintf "%s[%s]" x (printExpr y)
     | TimesExpr(x, y) -> sprintf "(%s * %s)" (printExpr x) (printExpr y)
     | DivExpr(x, y) -> sprintf "(%s / %s)" (printExpr x) (printExpr y)
     | PlusExpr(x, y) -> sprintf "(%s + %s)" (printExpr x) (printExpr y)
@@ -42,6 +43,7 @@ let rec prettyPrint ast : string =
     | Skip -> "skip"
     | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c) (prettyPrint c')
     | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
+    | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
