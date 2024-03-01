@@ -9,11 +9,11 @@ System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.Cult
 }
 
 // We define macros for some regular expressions we will use later 
-let digit       = ['0'-'9']
-let num         = digit+
-let whitespace  = [' ' '\t']
-let newline     = "\n\r" | '\n' | '\r'
-let variable    = ['a'-'z''A'-'Z']['a'-'z''A'-'Z']* //Take into account reserved keywords
+let digit           = ['0'-'9']
+let num             = digit+
+let whitespace      = [' ' '\t']
+let newline         = "\n\r" | '\n' | '\r'
+let variable        = (['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9']*)
 
 // We define now the rules for recognising and building tokens
 // for each of the tokens of our language we need a rule
