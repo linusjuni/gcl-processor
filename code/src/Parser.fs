@@ -44,6 +44,7 @@ let rec prettyPrintBool ast : string =
     | False -> "false"
     | Not(b) -> sprintf "!%s" (prettyPrintBool b)
     | And(b, b1) -> sprintf "(%s & %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | ShortAnd(b, b1) -> sprintf "(%s && %s)" (prettyPrintBool b) (prettyPrintBool b1)
     | _ -> "not ready"
 
 let rec prettyPrint (ast : command) : string =

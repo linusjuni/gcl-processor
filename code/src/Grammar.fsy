@@ -8,7 +8,7 @@ open AST
 %token <string> VAR
 %token TIMES DIV PLUS MINUS POW LPAR RPAR LSPAR RSPAR EOF
 %token SKIP PROGRAM ASSIGNMENT IF FI DO OD
-%token TRUE FALSE AND OR NOT
+%token TRUE FALSE AND OR NOT SHORTAND
 %token IMPLIES
 
 // NOTE: the actual formats of these tokens are defined in the lexer file
@@ -73,6 +73,7 @@ boolean:
   | boolean OR boolean            { Or($1,$3) }
   | NOT boolean                   { Not($2)}
   | LPAR boolean RPAR             { $2 }
+  | boolean SHORTAND boolean      { SHORTAND($1,$3) }
 
 command:
 
