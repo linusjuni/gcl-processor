@@ -44,7 +44,9 @@ let rec prettyPrintBool ast : string =
     | False -> "false"
     | Not(b) -> sprintf "!%s" (prettyPrintBool b)
     | And(b, b1) -> sprintf "(%s & %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | Or(b, b1) -> sprintf "(%s | %s)" (prettyPrintBool b) (prettyPrintBool b1)
     | ShortAnd(b, b1) -> sprintf "(%s && %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | ShortOr(b, b1) -> sprintf "(%s || %s)" (prettyPrintBool b) (prettyPrintBool b1)
     | _ -> "not ready"
 
 let rec prettyPrint (ast : command) : string =
@@ -58,6 +60,7 @@ let rec prettyPrint (ast : command) : string =
 and prettyPrintGCommand (ast : gcommand) : string = 
     match ast with
     | Implies(b, c) -> sprintf "%s -> \n   %s" (prettyPrintBool b) (prettyPrint c)
+    | GuardedOr(c, c1) -> sprintf "%s \n[] %s" (prettyPrintGCommand c) (prettyPrintGCommand c1)
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands

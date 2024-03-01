@@ -8,8 +8,8 @@ open AST
 %token <string> VAR
 %token TIMES DIV PLUS MINUS POW LPAR RPAR LSPAR RSPAR EOF
 %token SKIP PROGRAM IF FI DO OD ASSIGNMENT
-%token TRUE FALSE AND OR NOT SHORTAND
-%token IMPLIES
+%token TRUE FALSE AND OR NOT SHORTAND SHORTOR
+%token IMPLIES GUARDEDOR
 // NOTE: the actual formats of these tokens are defined in the lexer file
 //       as regular expressions
 
@@ -73,6 +73,7 @@ boolean:
   | NOT boolean                   { Not($2)}
   | LPAR boolean RPAR             { $2 }
   | boolean SHORTAND boolean      { ShortAnd($1,$3) }
+  | boolean SHORTOR boolean       { ShortOr($1,$3) } 
 
 command:
   | SKIP                           { Skip }
@@ -84,5 +85,6 @@ command:
 
 gcommand:
   | boolean IMPLIES command        { Implies($1,$3) }
+  | gcommand GUARDEDOR gcommand    { GuardedOr($1,$3) }
 
 %%
