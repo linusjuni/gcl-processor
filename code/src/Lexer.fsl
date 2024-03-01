@@ -34,3 +34,13 @@ rule tokenize = parse
 | eof           { EOF }
 | "skip"        { SKIP }
 | ";"           { PROGRAM }
+| "->"          { IMPLIES }
+| "true"        { TRUE }
+| "false"       { FALSE }
+| '&'           { AND }
+| '|'           { OR }
+| "if"          { IF }
+| "fi"          { FI }
+| "do"          { DO }
+| "od"          { OD }
+| '!'           { NOT }

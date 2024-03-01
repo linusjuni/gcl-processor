@@ -11,6 +11,21 @@ type expr =
     | PowExpr of (expr * expr)
     | UMinusExpr of (expr)
 
+type bool = 
+    | True
+    | False
+    | And of (bool * bool)
+    | Or of (bool * bool)
+    | ShortAnd of (bool * bool)
+    | ShortOr of (bool * bool)
+    | Not of (bool)
+
 type command =
     | Skip
     | Program of (command * command)
+    | If of (gcommand)
+    | Do of (gcommand)
+
+and gcommand = 
+    | Implies of (bool * command)
+
