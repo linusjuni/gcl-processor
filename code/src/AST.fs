@@ -21,7 +21,12 @@ type bool =
     | Not of (bool)
     | ShortAnd of (bool * bool)
     | ShortOr of (bool * bool)
-
+    | Equal of (expr * expr)
+    | NotEqual of (expr * expr)
+    | Less of (expr * expr)
+    | LessEqual of (expr * expr)
+    | Greater of (expr * expr)
+    | GreaterEqual of (expr * expr)
 
 type command =
     | Skip

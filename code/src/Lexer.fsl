@@ -52,3 +52,9 @@ rule tokenize = parse
 | '!'           { NOT }
 | ":="          { ASSIGNMENT }
 | variable      { VAR(LexBuffer<_>.LexemeString lexbuf) }
+| "="           { EQUAL }
+| "!="          { NOTEQUAL }
+| "<"           { LESS }
+| "<="          { LESSEQUAL }
+| ">"           { GREATER }
+| ">="          { GREATEREQUAL }
