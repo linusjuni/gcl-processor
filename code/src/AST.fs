@@ -18,8 +18,6 @@ type bool =
     | False
     | And of (bool * bool)
     | Or of (bool * bool)
-    | ShortAnd of (bool * bool)
-    | ShortOr of (bool * bool)
     | Not of (bool)
 
 type command =

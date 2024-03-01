@@ -72,7 +72,7 @@ boolean:
   | boolean OR boolean            { Or($1,$3) }
   | NOT boolean                   { Not($2)}
   | LPAR boolean RPAR             { $2 }
-  | boolean SHORTAND boolean      { SHORTAND($1,$3) }
+  //| boolean SHORTAND boolean      { SHORTAND($1,$3) }
 
 command:
   | SKIP                           { Skip }
