@@ -45,6 +45,25 @@ let rec prettyPrint ast : string =
     | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
     | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
 
+let rec prettyPrintBool ast : string =
+    match ast with
+    | True -> "true"
+    | False -> "false"
+    | Not(b) -> sprintf "!%s" (prettyPrintBool b)
+    | And(b, b1) -> sprintf "(%s & %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | _ -> "not ready"
+
+let rec prettyPrint (ast : command) : string =
+    match ast with 
+    | Skip -> "skip"
+    | Program(c, c') -> sprintf "%s; %s" (prettyPrint c) (prettyPrint c')
+    | If(gc) -> sprintf "if %s \nfi" (prettyPrintGCommand gc)
+    | Do(gc) -> sprintf "do %s \nod" (prettyPrintGCommand gc)
+    
+and prettyPrintGCommand (ast : gcommand) : string = 
+    match ast with
+    | Implies(b, c) -> sprintf "%s -> \n   %s" (prettyPrintBool b) (prettyPrint c)
+
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with

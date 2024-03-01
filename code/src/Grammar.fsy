@@ -8,6 +8,11 @@ open AST
 %token <string> VAR
 %token TIMES DIV PLUS MINUS POW LPAR RPAR LSPAR RSPAR EOF
 %token SKIP PROGRAM ASSIGNMENT
+%token TIMES DIV PLUS MINUS POW LPAR RPAR EOF
+%token SKIP PROGRAM IF FI DO OD
+%token TRUE FALSE AND OR NOT
+%token IMPLIES
+
 // NOTE: the actual formats of these tokens are defined in the lexer file
 //       as regular expressions
 
@@ -16,6 +21,9 @@ open AST
 %left PLUS MINUS
 %left TIMES DIV
 %right POW
+
+%left NOT
+%left AND OR
 
 
 // We declare the initial non-terminal symbol
@@ -27,6 +35,7 @@ open AST
 %type <AST.expr> expression
 %type <AST.command> start_command
 %type <AST.command> command
+%type <AST.gcommand> gcommand
 
 // Grammar productions
 %%
@@ -60,11 +69,27 @@ expression:
 // For example { TimesExpr($1,$3) } specifies that parsing with the production
 // returns the value TimesExpr($1,$3), where $i is the result of parsing
 // component i in the production (in this case the lhs and rhs operands)
+boolean:
+  | TRUE                          { True }
+  | FALSE                         { False }
+  | boolean AND boolean           { And($1,$3) }
+  | boolean OR boolean            { Or($1,$3) }
+  | NOT boolean                   { Not($2)}
+  | LPAR boolean RPAR             { $2 }
 
 command:
+
   | SKIP                                                 { Skip }
   | command PROGRAM command                              { Program($1,$3) } 
   | VAR ASSIGNMENT expression                            { Assignment($1,$3) }
   | VAR LSPAR expression RSPAR ASSIGNMENT expression     { ListAssignment($1, $3, $6) }
+
+  | SKIP                           { Skip }
+  | command PROGRAM command        { Program($1,$3) } 
+  | IF gcommand FI                 { If($2) }
+  | DO gcommand OD                 { Do($2) }
+
+gcommand:
+  | boolean IMPLIES command        { Implies($1,$3) }
 
 %%

@@ -39,3 +39,13 @@ rule tokenize = parse
 | ";"           { PROGRAM }
 | ":="          { ASSIGNMENT }
 | variable      { VAR(LexBuffer<_>.LexemeString lexbuf) }
+| "->"          { IMPLIES }
+| "true"        { TRUE }
+| "false"       { FALSE }
+| '&'           { AND }
+| '|'           { OR }
+| "if"          { IF }
+| "fi"          { FI }
+| "do"          { DO }
+| "od"          { OD }
+| '!'           { NOT }
