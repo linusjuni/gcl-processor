@@ -26,10 +26,22 @@ let parse parser src =
         eprintf "\n"
         Error(ParseError(pos, lastToken, e))
 
+let rec printExpr expr = 
+    match expr with
+    | Num(x) -> string x
+    | Var(x) -> x
+    | TimesExpr(x, y) -> sprintf "(%s * %s)" (printExpr x) (printExpr y)
+    | DivExpr(x, y) -> sprintf "(%s / %s)" (printExpr x) (printExpr y)
+    | PlusExpr(x, y) -> sprintf "(%s + %s)" (printExpr x) (printExpr y)
+    | MinusExpr(x, y) -> sprintf "(%s - %s)" (printExpr x) (printExpr y)
+    | PowExpr(x, y) -> sprintf "(%s ^ %s)" (printExpr x) (printExpr y)
+    | UMinusExpr(x) -> sprintf "(- %s)" (printExpr x)
+
 let rec prettyPrint ast : string =
     match ast with 
     | Skip -> "skip"
-    | Program(c, c') -> sprintf "%s; %s" (prettyPrint c) (prettyPrint c')
+    | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c) (prettyPrint c')
+    | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands

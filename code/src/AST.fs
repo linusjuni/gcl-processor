@@ -4,6 +4,7 @@ module AST
 
 type expr =
     | Num of int
+    | Var of string
     | TimesExpr of (expr * expr)
     | DivExpr of (expr * expr)
     | PlusExpr of (expr * expr)
@@ -14,3 +15,4 @@ type expr =
 type command =
     | Skip
     | Program of (command * command)
+    | Assignment of (string * expr)
