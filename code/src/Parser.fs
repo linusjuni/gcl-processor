@@ -47,7 +47,13 @@ let rec prettyPrintBool ast : string =
     | Or(b, b1) -> sprintf "(%s | %s)" (prettyPrintBool b) (prettyPrintBool b1)
     | ShortAnd(b, b1) -> sprintf "(%s && %s)" (prettyPrintBool b) (prettyPrintBool b1)
     | ShortOr(b, b1) -> sprintf "(%s || %s)" (prettyPrintBool b) (prettyPrintBool b1)
-    | _ -> "not ready"
+    | Equal(b, b1) -> sprintf "(%s = %s)" (printExpr b) (printExpr b1)
+    | NotEqual(b, b1) -> sprintf "(%s != %s)" (printExpr b) (printExpr b1)
+    | Less(b, b1) -> sprintf "(%s < %s)" (printExpr b) (printExpr b1)
+    | LessEqual(b, b1) -> sprintf "(%s <= %s)" (printExpr b) (printExpr b1)
+    | Greater(b, b1) -> sprintf "(%s > %s)" (printExpr b) (printExpr b1)
+    | GreaterEqual(b, b1) -> sprintf "(%s >= %s)" (printExpr b) (printExpr b1)
+    | _ -> "fine"
 
 let rec prettyPrint (ast : command) : string =
     match ast with 
