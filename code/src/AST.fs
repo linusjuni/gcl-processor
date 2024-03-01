@@ -20,6 +20,8 @@ type bool =
     | Or of (bool * bool)
     | Not of (bool)
     | ShortAnd of (bool * bool)
+    | ShortOr of (bool * bool)
+
 
 type command =
     | Skip
@@ -31,3 +33,4 @@ type command =
 
 and gcommand = 
     | Implies of (bool * command)
+    | GuardedOr of (gcommand * gcommand)

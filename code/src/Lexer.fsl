@@ -38,11 +38,13 @@ rule tokenize = parse
 | "skip"        { SKIP }
 | ";"           { PROGRAM }
 | "->"          { IMPLIES }
+| "[]"          { GUARDEDOR }
 | "true"        { TRUE }
 | "false"       { FALSE }
 | '&'           { AND }
 | '|'           { OR }
 | "&&"          { SHORTAND }
+| "||"          { SHORTOR }
 | "if"          { IF }
 | "fi"          { FI }
 | "do"          { DO }
