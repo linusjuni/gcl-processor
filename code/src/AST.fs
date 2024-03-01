@@ -4,6 +4,8 @@ module AST
 
 type expr =
     | Num of int
+    | Var of string
+    | ListElement of (string * expr)
     | TimesExpr of (expr * expr)
     | DivExpr of (expr * expr)
     | PlusExpr of (expr * expr)
@@ -23,6 +25,8 @@ type bool =
 type command =
     | Skip
     | Program of (command * command)
+    | Assignment of (string * expr)
+    | ListAssignment of (string * expr * expr) //A[expr] := expr
     | If of (gcommand)
     | Do of (gcommand)
 

@@ -8,11 +8,12 @@ open Grammar
 System.Globalization.CultureInfo.CurrentCulture <- new System.Globalization.CultureInfo("en-US")
 }
 
-// We define macros for some regular expressions we will use later
-let digit       = ['0'-'9']
-let num         = digit+
-let whitespace  = [' ' '\t']
-let newline     = "\n\r" | '\n' | '\r'
+// We define macros for some regular expressions we will use later 
+let digit           = ['0'-'9']
+let num             = digit+
+let whitespace      = [' ' '\t']
+let newline         = "\n\r" | '\n' | '\r'
+let variable        = (['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9']*)
 
 // We define now the rules for recognising and building tokens
 // for each of the tokens of our language we need a rule
@@ -31,9 +32,13 @@ rule tokenize = parse
 | '^'           { POW }
 | '('           { LPAR }
 | ')'           { RPAR }
+| '['           { LSPAR }
+| ']'           { RSPAR }
 | eof           { EOF }
 | "skip"        { SKIP }
 | ";"           { PROGRAM }
+| ":="          { ASSIGNMENT }
+| variable      { VAR(LexBuffer<_>.LexemeString lexbuf) }
 | "->"          { IMPLIES }
 | "true"        { TRUE }
 | "false"       { FALSE }
