@@ -25,11 +25,10 @@ type bool =
 type command =
     | Skip
     | Program of (command * command)
-    | Assignment of (string * expr)
-    | ListAssignment of (string * expr * expr) //A[expr] := expr
     | If of (gcommand)
     | Do of (gcommand)
+    | Assignment of (string * expr)
+    | ListAssignment of (string * expr * expr) //A[expr] := expr
 
 and gcommand = 
     | Implies of (bool * command)
-

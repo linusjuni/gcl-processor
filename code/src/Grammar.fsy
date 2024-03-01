@@ -7,10 +7,9 @@ open AST
 %token <int> NUM
 %token <string> VAR
 %token TIMES DIV PLUS MINUS POW LPAR RPAR LSPAR RSPAR EOF
-%token SKIP PROGRAM ASSIGNMENT IF FI DO OD
-%token TRUE FALSE AND OR NOT SHORTAND
+%token SKIP PROGRAM IF FI DO OD ASSIGNMENT
+%token TRUE FALSE AND OR NOT
 %token IMPLIES
-
 // NOTE: the actual formats of these tokens are defined in the lexer file
 //       as regular expressions
 
@@ -76,16 +75,12 @@ boolean:
   | boolean SHORTAND boolean      { SHORTAND($1,$3) }
 
 command:
-
-  | SKIP                                                 { Skip }
-  | command PROGRAM command                              { Program($1,$3) } 
-  | VAR ASSIGNMENT expression                            { Assignment($1,$3) }
-  | VAR LSPAR expression RSPAR ASSIGNMENT expression     { ListAssignment($1, $3, $6) }
-
   | SKIP                           { Skip }
   | command PROGRAM command        { Program($1,$3) } 
   | IF gcommand FI                 { If($2) }
   | DO gcommand OD                 { Do($2) }
+  | VAR ASSIGNMENT expression                            { Assignment($1,$3) }
+  | VAR LSPAR expression RSPAR ASSIGNMENT expression     { ListAssignment($1, $3, $6) }
 
 gcommand:
   | boolean IMPLIES command        { Implies($1,$3) }

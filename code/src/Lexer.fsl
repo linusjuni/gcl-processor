@@ -37,8 +37,6 @@ rule tokenize = parse
 | eof           { EOF }
 | "skip"        { SKIP }
 | ";"           { PROGRAM }
-| ":="          { ASSIGNMENT }
-| variable      { VAR(LexBuffer<_>.LexemeString lexbuf) }
 | "->"          { IMPLIES }
 | "true"        { TRUE }
 | "false"       { FALSE }
@@ -49,3 +47,5 @@ rule tokenize = parse
 | "do"          { DO }
 | "od"          { OD }
 | '!'           { NOT }
+| ":="          { ASSIGNMENT }
+| variable      { VAR(LexBuffer<_>.LexemeString lexbuf) }
