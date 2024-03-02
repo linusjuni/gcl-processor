@@ -60,8 +60,8 @@ let rec prettyPrintBool ast : string =
 let rec prettyPrint (ast : command) indent : string =
     let str = match ast with 
                 | Skip -> "skip"
-                | If(gc) -> sprintf "if %s \nfi" (prettyPrintGCommand gc indent)
-                | Do(gc) -> sprintf "do %s \nod" (prettyPrintGCommand gc indent)
+                | If(gc) -> sprintf "if %s \n%sfi" (prettyPrintGCommand gc indent) indent
+                | Do(gc) -> sprintf "do %s \n%sod" (prettyPrintGCommand gc indent) indent
                 | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c indent) (prettyPrint c' indent)
                 | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
                 | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
