@@ -7,6 +7,8 @@ open AST
 
 exception ParseError of Position * string * Exception
 
+let INDENTATION = "   "
+
 let parse parser src =
     let lexbuf = LexBuffer<char>.FromString src
 
@@ -55,23 +57,24 @@ let rec prettyPrintBool ast : string =
     | GreaterEqual(b, b1) -> sprintf "(%s >= %s)" (printExpr b) (printExpr b1)
     | _ -> "fine"
 
-let rec prettyPrint (ast : command) : string =
-    match ast with 
-    | Skip -> "skip"
-    | If(gc) -> sprintf "if %s \nfi" (prettyPrintGCommand gc)
-    | Do(gc) -> sprintf "do %s \nod" (prettyPrintGCommand gc)
-    | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c) (prettyPrint c')
-    | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
-    | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
-and prettyPrintGCommand (ast : gcommand) : string = 
+let rec prettyPrint (ast : command) indent : string =
+    let str = match ast with 
+                | Skip -> "skip"
+                | If(gc) -> sprintf "if %s \nfi" (prettyPrintGCommand gc indent)
+                | Do(gc) -> sprintf "do %s \nod" (prettyPrintGCommand gc indent)
+                | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c indent) (prettyPrint c' indent)
+                | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
+                | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
+    indent + str
+and prettyPrintGCommand (ast : gcommand) indent : string = 
     match ast with
-    | Implies(b, c) -> sprintf "%s -> \n   %s" (prettyPrintBool b) (prettyPrint c)
-    | GuardedOr(c, c1) -> sprintf "%s \n[] %s" (prettyPrintGCommand c) (prettyPrintGCommand c1)
+    | Implies(b, c) -> sprintf "%s -> \n%s" (prettyPrintBool b) (prettyPrint c (indent + INDENTATION))
+    | GuardedOr(c, c1) -> sprintf "%s \n[] %s" (prettyPrintGCommand c indent) (prettyPrintGCommand c1 indent)
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with
         | Ok ast ->
             Console.Error.WriteLine("> {0}", ast)
-            { pretty = prettyPrint ast }
+            { pretty = prettyPrint ast ""}
         | Error e -> { pretty = String.Format("Parse error: {0}", e) }
