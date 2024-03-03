@@ -9,12 +9,6 @@ exception ParseError of Position * string * Exception
 
 let INDENTATION = "   "
 
-let removeIndent (str: string) =
-    if String.length str <= 3 then
-        ""
-    else
-        str.[..(String.length str - 3 - 1)]
-
 let parse parser src =
     let lexbuf = LexBuffer<char>.FromString src
 
@@ -64,12 +58,13 @@ let rec prettyPrintBool ast : string =
 
 let rec prettyPrint (ast : command) indent : string =
     match ast with 
-                | Skip -> "skip"
-                | If(gc) -> sprintf "%sif %s \n%sfi" indent (prettyPrintGCommand gc indent) indent
-                | Do(gc) -> sprintf "%sdo %s \n%sod" indent (prettyPrintGCommand gc indent) indent
-                | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c  indent) (prettyPrint c' indent)
-                | Assignment(variable, expr) -> sprintf "%s%s := %s" indent variable (printExpr expr)
-                | ListAssignment(variable, index, value) -> sprintf "%s%s[%s] := %s" indent variable (printExpr index) (printExpr value)
+        | Skip -> "skip"
+        | If(gc) -> sprintf "if %s \n%sfi" (prettyPrintGCommand gc indent) inden
+        | Do(gc) -> sprintf "do %s \n%sod" (prettyPrintGCommand gc indent) indent
+        | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c indent) (prettyPrint c' indent)
+        | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
+        | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
+
 and prettyPrintGCommand (ast : gcommand) indent : string = 
     match ast with
     | Implies(b, c) -> sprintf "%s -> \n%s" (prettyPrintBool b) (prettyPrint c (indent + INDENTATION))
