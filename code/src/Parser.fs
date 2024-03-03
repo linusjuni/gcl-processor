@@ -59,11 +59,11 @@ let rec prettyPrintBool ast : string =
 let rec prettyPrint (ast : command) indent : string =
     match ast with 
         | Skip -> "skip"
-        | If(gc) -> sprintf "if %s \n%sfi" (prettyPrintGCommand gc indent) inden
-        | Do(gc) -> sprintf "do %s \n%sod" (prettyPrintGCommand gc indent) indent
+        | If(gc) -> sprintf "%sif %s \n%sfi" indent (prettyPrintGCommand gc indent) indent
+        | Do(gc) -> sprintf "%sdo %s \n%sod" indent (prettyPrintGCommand gc indent) indent
         | Program(c, c') -> sprintf "%s ;\n%s" (prettyPrint c indent) (prettyPrint c' indent)
-        | Assignment(variable, expr) -> sprintf "%s := %s" variable (printExpr expr)
-        | ListAssignment(variable, index, value) -> sprintf "%s[%s] := %s" variable (printExpr index) (printExpr value)
+        | Assignment(variable, expr) -> sprintf "%s%s := %s" indent variable (printExpr expr)
+        | ListAssignment(variable, index, value) -> sprintf "%s%s[%s] := %s" indent variable (printExpr index) (printExpr value)
 
 and prettyPrintGCommand (ast : gcommand) indent : string = 
     match ast with
