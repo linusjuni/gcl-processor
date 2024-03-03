@@ -15,12 +15,16 @@ open AST
 
 // Specify precedence and associativity of operators
 // Precedence is given by the order (from low to high)
-%left TIMES DIV
-%left PLUS MINUS
-%left NOT
+%left SHORTAND SHORTOR
 %left AND OR
+%left PLUS MINUS
+%left TIMES DIV
 
-%right POW PROGRAM
+%right PROGRAM
+%right GUARDEDOR
+// missing unary minus
+%right POW
+%right NOT
 
 // We declare the initial non-terminal symbol
 %start start_expression
