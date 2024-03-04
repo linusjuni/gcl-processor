@@ -19,12 +19,12 @@ open AST
 %left AND OR
 %left PLUS MINUS
 %left TIMES DIV
-%right UMINUS
 
 %right PROGRAM
 %right GUARDEDOR
 %right POW
 %right NOT
+%right UMINUS
 
 // We declare the initial non-terminal symbol
 %start start_expression
