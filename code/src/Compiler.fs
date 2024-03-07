@@ -1,6 +1,5 @@
 module Compiler
 open Io.Compiler
-
 open FSharp.Text.Lexing
 open System
 open AST
@@ -26,16 +25,38 @@ let parse parser src =
         eprintf "\n"
         Error(ParseError(pos, lastToken, e))
 
-let rec edges ast =
-    failwith "lol"
+type Label = 
+    CommandLabel of command
 
-let rec printDot edges =
-    failwith "fack"
+type Edge = {
+    source: string
+    label: Label
+    target: string
+}
+
+let rec edges c q1 q2 =
+    match c with
+    | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
+    | _ -> []
+
+let printL l = 
+    match l with
+    | CommandLabel Skip -> "skip"
+    | _ -> "TODO"
+
+let printDotEdges e =
+    match e with
+    | [ e1 ] -> e1.source + " -> " + e1.target + "[label = \"" + (printL e1.label) + "\"];"
+    | _ -> ""
+
+let rec printDot e =
+    match e with
+    | _ -> "digraph program_graph {rankdir=LR;"
+    + printDotEdges e
+    + "}"
 
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with
-        | Ok ast ->
-            Console.Error.WriteLine("> {0}", ast)
-            { dot = printDot <| edges <| ast}
-        | Error e -> { dot = String.Format("Parse error: {0}", e) }
+        | Ok ast -> { dot = printDot (edges ast "qS" "qF") }
+        | Error e -> { dot = "" }
