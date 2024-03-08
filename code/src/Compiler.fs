@@ -6,13 +6,6 @@ open AST
 
 exception ParseError of Position * string * Exception
 
-let mutable ID = 0
-
-let getId = 
-    let id = "q" + string ID
-    ID <- ID + 1
-    id
-
 let rec printExpr expr = 
     match expr with
     | Num(x) -> string x
@@ -70,18 +63,19 @@ type Edge = {
     target: string
 }
 
-let rec edges command q1 q2 =
+let rec edges command q1 q2 ids =
     match command with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
     | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
-    | Program (c, c') -> let id = "q" + string ID
-                         ID <- ID + 1
-                         edges c q1 id  @ edges c' id q2
-    | If(gc) -> guardedEdges gc q1 q2
+    | Program (c, c') -> let id = Seq.head ids
+                         let ids' = Seq.tail ids
+                         edges c q1 id ids'  @ edges c' id q2 ids'
+    | If(gc) -> guardedEdges gc q1 q2 ids
     | _ -> []
-and guardedEdges gcommand q1 q2 = 
+and guardedEdges gcommand q1 q2 ids = 
     match gcommand with
-    | Implies(b,c) -> {source = q1; label = GCommandLabel(Implies(b, c)); target = "q"} :: edges c "q" q2
+    | Implies(b,c) -> let id = Seq.head ids
+                      {source = q1; label = GCommandLabel(Implies(b, c)); target = id} :: edges c id q2 (Seq.tail ids)
     // | GuardedOr(c, c1) -> edges c q1 q2 @ edges c1 q1 q2
     | _ -> []
 
@@ -106,5 +100,5 @@ let rec printDot edges =
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with
-        | Ok ast -> { dot = printDot (edges ast "qS" "qF") }
+        | Ok ast -> { dot = printDot (edges ast "qI" "qF" (Seq.initInfinite (fun i -> "q" + string i))) }
         | Error e -> { dot = "" }
