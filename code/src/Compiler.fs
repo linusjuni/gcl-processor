@@ -77,7 +77,6 @@ let rec edges command q1 q2 ids =
                          edges c q1 id ids'  @ edges c' id q2 ids'
     | If(gc) -> guardedEdges gc q1 q2 ids
     | Do(gc) -> guardedEdges gc q1 q1 ids @ [ {source = q1; label = BoolLabel(Done(gc)) ;target = q2} ]
-    | _ -> []
 and guardedEdges gcommand q1 q2 ids = 
     match gcommand with
     | Implies(b,c) -> let id = Seq.head ids
@@ -89,7 +88,6 @@ and guardedEdges gcommand q1 q2 ids =
         let edges1 = guardedEdges gc1 q1 q2 (Seq.append (Seq.singleton id1) ids')
         let edges2 = guardedEdges gc2 q1 q2 (Seq.append (Seq.singleton id2) ids')
         edges1 @ edges2
-    | _ -> []
 
 let rec printLabel label = 
     match label with
