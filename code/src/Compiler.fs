@@ -46,8 +46,8 @@ type Edge = {
     target: string
 }
 
-let rec edges c q1 q2 =
-    match c with
+let rec edges command q1 q2 =
+    match command with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
     | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
     | _ -> []
@@ -58,8 +58,8 @@ let printLabel label =
     | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
     | _ -> "TODO"
 
-let printDotEdges e =
-    match e with
+let printDotEdges edge =
+    match edge with
     | [ e1 ] -> e1.source + " -> " + e1.target + "[label = \"" + (printLabel e1.label) + "\"];"
     | _ -> ""
 
