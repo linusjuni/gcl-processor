@@ -71,6 +71,7 @@ let rec edges command q1 q2 ids =
     match command with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
     | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
+    | ListAssignment (var, expr1, expr2 ) -> [ {source = q1; label = CommandLabel(ListAssignment(var,expr1,expr2));target = q2} ]
     | Program (c, c') -> let id = Seq.head ids
                          let ids' = Seq.tail ids
                          edges c q1 id ids'  @ edges c' id q2 ids'
@@ -94,6 +95,7 @@ let rec printLabel label =
     match label with
     | CommandLabel Skip -> "skip"
     | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
+    | CommandLabel (ListAssignment (var, expr1, expr2)) -> var + "[" + printExpr(expr1) + "] := " + printExpr(expr2) 
     | BoolLabel (b) -> prettyPrintBool b
     | _ -> "TODO"
 
