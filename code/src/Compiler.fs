@@ -94,7 +94,7 @@ and guardedEdges gcommand q1 q2 ids =
 let rec printLabel label = 
     match label with
     | CommandLabel Skip -> "skip"
-    | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
+    | CommandLabel (Assignment (var, expr)) -> var + " := " + printExpr(expr)
     | CommandLabel (ListAssignment (var, expr1, expr2)) -> var + "[" + printExpr(expr1) + "] := " + printExpr(expr2) 
     | BoolLabel (b) -> prettyPrintBool b
     | _ -> "TODO"
