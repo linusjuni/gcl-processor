@@ -25,6 +25,22 @@ let rec printExpr expr =
     | PowExpr(x, y) -> sprintf "(%s ^ %s)" (printExpr x) (printExpr y)
     | UMinusExpr(x) -> sprintf "-%s" (printExpr x)
 
+let rec prettyPrintBool ast : string =
+    match ast with
+    | True -> "true"
+    | False -> "false"
+    | Not(b) -> sprintf "!%s" (prettyPrintBool b)
+    | And(b, b1) -> sprintf "(%s & %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | Or(b, b1) -> sprintf "(%s | %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | ShortAnd(b, b1) -> sprintf "(%s && %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | ShortOr(b, b1) -> sprintf "(%s || %s)" (prettyPrintBool b) (prettyPrintBool b1)
+    | Equal(b, b1) -> sprintf "(%s = %s)" (printExpr b) (printExpr b1)
+    | NotEqual(b, b1) -> sprintf "(%s != %s)" (printExpr b) (printExpr b1)
+    | Less(b, b1) -> sprintf "(%s < %s)" (printExpr b) (printExpr b1)
+    | LessEqual(b, b1) -> sprintf "(%s <= %s)" (printExpr b) (printExpr b1)
+    | Greater(b, b1) -> sprintf "(%s > %s)" (printExpr b) (printExpr b1)
+    | GreaterEqual(b, b1) -> sprintf "(%s >= %s)" (printExpr b) (printExpr b1)
+
 let parse parser src =
     let lexbuf = LexBuffer<char>.FromString src
 
@@ -45,7 +61,8 @@ let parse parser src =
         Error(ParseError(pos, lastToken, e))
 
 type Label = 
-    CommandLabel of command
+    | CommandLabel of command
+    | GCommandLabel of gcommand
 
 type Edge = {
     source: string
@@ -57,14 +74,22 @@ let rec edges command q1 q2 =
     match command with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
     | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
-    | Program (c, c') -> let id = getId
+    | Program (c, c') -> let id = "q" + string ID
+                         ID <- ID + 1
                          edges c q1 id  @ edges c' id q2
+    | If(gc) -> guardedEdges gc q1 q2
+    | _ -> []
+and guardedEdges gcommand q1 q2 = 
+    match gcommand with
+    | Implies(b,c) -> {source = q1; label = GCommandLabel(Implies(b, c)); target = "q"} :: edges c "q" q2
+    // | GuardedOr(c, c1) -> edges c q1 q2 @ edges c1 q1 q2
     | _ -> []
 
 let printLabel label = 
     match label with
     | CommandLabel Skip -> "skip"
     | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
+    | GCommandLabel (Implies(b, _)) -> prettyPrintBool b
     | _ -> "TODO"
 
 let rec printDotEdges edges =
