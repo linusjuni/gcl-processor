@@ -1,6 +1,7 @@
 module Compiler
 
 open Io.Compiler
+open Io.GCL
 open FSharp.Text.Lexing
 open System
 open AST
@@ -84,29 +85,34 @@ and countGuadedNodes gcommand =
     | Implies(b,c) -> 1 + countNodes c
     | GuardedOr(gc,gc1) -> countGuadedNodes gc + countGuadedNodes gc1
 
-let rec edges command q1 q2 count =
+let rec edges command q1 q2 count (determinism: Determinism) =
     match command with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ], count
     | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target =q2}], count
     | ListAssignment (var, expr1, expr2 ) -> [ {source = q1; label = CommandLabel(ListAssignment(var,expr1,expr2));target = q2} ], count
     | Program (c, c') ->
         let count' = countNodes c + count
-        let edge, _ = edges c q1 (createId (count')) count
-        let edge', count'' = edges c' (createId count') q2 count'
+        let edge, _ = edges c q1 (createId (count')) count determinism
+        let edge', count'' = edges c' (createId count') q2 count' determinism
         edge @ edge', count''
-    | If(gc) -> guardedEdges gc q1 q2 count
+    | If(gc) -> 
+        let edge, count', _ = guardedEdges gc q1 q2 count determinism False
+        edge, count'
     | Do(gc) -> 
-        let edge, count' = guardedEdges gc q1 q1 count
+        let edge, count', _ = guardedEdges gc q1 q1 count determinism False
         {source = q1; label = BoolLabel(Done(gc)) ;target = q2} :: edge, count + 1
-and guardedEdges gcommand q1 q2 count =
+and guardedEdges gcommand q1 q2 count determinism (previousBool: bool) =
     match gcommand with
     | Implies(b,c) ->
-        let edge, count' = edges c (createId (count + 1)) q2 (count + 1)
-        {source = q1; label = BoolLabel(b); target = createId (count + 1)} :: edge, count'
+        let edge, count' = edges c (createId (count + 1)) q2 (count + 1) determinism 
+        let bool, nextBool = match determinism with
+                             | NonDeterministic -> b, False
+                             | Deterministic -> And(b, Not(previousBool)), Or(b, previousBool)
+        {source = q1; label = BoolLabel(bool); target = createId (count + 1)} :: edge, count', nextBool
     | GuardedOr(gc1, gc2) ->
-        let edge, count' = guardedEdges gc1 q1 q2 count
-        let edge', count'' = guardedEdges gc2 q1 q2 count'
-        edge @ edge', count''
+        let edge, count', nextBool = guardedEdges gc1 q1 q2 count determinism previousBool
+        let edge', count'', nextBool' = guardedEdges gc2 q1 q2 count' determinism nextBool
+        edge @ edge', count'', nextBool'
 
 let rec printLabel label = 
     match label with
@@ -114,7 +120,6 @@ let rec printLabel label =
     | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
     | CommandLabel (ListAssignment (var, expr1, expr2)) -> var + "[" + printExpr(expr1) + "] := " + printExpr(expr2) 
     | BoolLabel (b) -> prettyPrintBool b
-    | _ -> "TODO"
 
 let rec printDotEdges edges =
     match edges with
@@ -131,6 +136,6 @@ let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with
         | Ok ast -> 
-            let edge, _ = edges ast "qI" "qF" 0
+            let edge, _ = edges ast "qI" "qF" 0 input.determinism
             { dot = printDot (edge) }
         | Error e -> { dot = "" }
