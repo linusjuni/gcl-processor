@@ -81,7 +81,13 @@ and guardedEdges gcommand q1 q2 ids =
     match gcommand with
     | Implies(b,c) -> let id = Seq.head ids
                       {source = q1; label = BoolLabel(b); target = id} :: edges c id q2 (Seq.tail ids)
-    // | GuardedOr(c, c1) -> edges c q1 q2 @ edges c1 q1 q2
+    | GuardedOr(gc1, gc2) ->
+        let id1 = Seq.head ids
+        let id2 = Seq.head (Seq.tail ids)
+        let ids' = Seq.skip 2 ids
+        let edges1 = guardedEdges gc1 q1 q2 (Seq.append (Seq.singleton id1) ids')
+        let edges2 = guardedEdges gc2 q1 q2 (Seq.append (Seq.singleton id2) ids')
+        edges1 @ edges2
     | _ -> []
 
 let rec printLabel label = 
