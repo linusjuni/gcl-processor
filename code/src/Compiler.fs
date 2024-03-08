@@ -8,6 +8,11 @@ exception ParseError of Position * string * Exception
 
 let mutable ID = 0
 
+let getId = 
+    let id = "q" + string ID
+    ID <- ID + 1
+    id
+
 let rec printExpr expr = 
     match expr with
     | Num(x) -> string x
@@ -52,8 +57,7 @@ let rec edges command q1 q2 =
     match command with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
     | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
-    | Program (c, c') -> let id = "q" + string ID
-                         ID <- ID + 1
+    | Program (c, c') -> let id = getId
                          edges c q1 id  @ edges c' id q2
     | _ -> []
 
