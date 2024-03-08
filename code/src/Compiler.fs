@@ -1,4 +1,5 @@
 module Compiler
+
 open Io.Compiler
 open FSharp.Text.Lexing
 open System
@@ -52,6 +53,14 @@ let parse parser src =
         eprintf "Last token: %s" lastToken
         eprintf "\n"
         Error(ParseError(pos, lastToken, e))
+
+let counter = ref 0 // Counter for generating unique IDs
+
+let nextId () =
+    let id = !counter
+    counter := !counter + 1
+    id |> string |> (+) "q" // Convert to string and prepend with "q"
+
 let rec Done gc = 
     match gc with
     | Implies(b,c) -> Not (b)
@@ -67,32 +76,33 @@ type Edge = {
     target: string
 }
 
-let rec edges command q1 q2 ids =
+let rec edges command q1 q2 =
     match command with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
     | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
     | ListAssignment (var, expr1, expr2 ) -> [ {source = q1; label = CommandLabel(ListAssignment(var,expr1,expr2));target = q2} ]
-    | Program (c, c') -> let id = Seq.head ids
-                         let ids' = Seq.tail ids
-                         edges c q1 id ids'  @ edges c' id q2 ids'
-    | If(gc) -> guardedEdges gc q1 q2 ids
-    | Do(gc) -> guardedEdges gc q1 q1 ids @ [ {source = q1; label = BoolLabel(Done(gc)) ;target = q2} ]
-and guardedEdges gcommand q1 q2 ids = 
+    | Program (c, c') ->
+        let id = nextId ()
+        edges c q1 id @ edges c' id q2
+    | If(gc) -> guardedEdges gc q1 q2
+    | Do(gc) -> guardedEdges gc q1 q1 @ [ {source = q1; label = BoolLabel(Done(gc)) ;target = q2} ]
+    | _ -> []
+
+and guardedEdges gcommand q1 q2 =
     match gcommand with
-    | Implies(b,c) -> let id = Seq.head ids
-                      {source = q1; label = BoolLabel(b); target = id} :: edges c id q2 (Seq.tail ids)
+    | Implies(b,c) ->
+        let id = nextId ()
+        {source = q1; label = BoolLabel(b); target = id} :: edges c id q2
     | GuardedOr(gc1, gc2) ->
-        let id1 = Seq.head ids
-        let id2 = Seq.head (Seq.tail ids)
-        let ids' = Seq.skip 2 ids
-        let edges1 = guardedEdges gc1 q1 q2 (Seq.append (Seq.singleton id1) ids')
-        let edges2 = guardedEdges gc2 q1 q2 (Seq.append (Seq.singleton id2) ids')
-        edges1 @ edges2
+        let id1 = nextId ()
+        let id2 = nextId ()
+        guardedEdges gc1 q1 q2 @ guardedEdges gc2 q1 q2
+    | _ -> []
 
 let rec printLabel label = 
     match label with
     | CommandLabel Skip -> "skip"
-    | CommandLabel (Assignment (var, expr)) -> var + " := " + printExpr(expr)
+    | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
     | CommandLabel (ListAssignment (var, expr1, expr2)) -> var + "[" + printExpr(expr1) + "] := " + printExpr(expr2) 
     | BoolLabel (b) -> prettyPrintBool b
     | _ -> "TODO"
@@ -111,5 +121,7 @@ let rec printDot edges =
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with
-        | Ok ast -> { dot = printDot (edges ast "qI" "qF" (Seq.initInfinite (fun i -> "q" + string (i+1)))) }
+        | Ok ast -> 
+            counter := 0 // Reset counter
+            { dot = printDot (edges ast "qI" "qF") }
         | Error e -> { dot = "" }
