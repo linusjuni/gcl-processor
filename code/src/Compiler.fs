@@ -35,6 +35,8 @@ let rec prettyPrintBool ast : string =
     | Greater(b, b1) -> sprintf "(%s > %s)" (printExpr b) (printExpr b1)
     | GreaterEqual(b, b1) -> sprintf "(%s >= %s)" (printExpr b) (printExpr b1)
 
+let createId x = x |> string |> (+) "q"
+
 let parse parser src =
     let lexbuf = LexBuffer<char>.FromString src
 
@@ -54,13 +56,6 @@ let parse parser src =
         eprintf "\n"
         Error(ParseError(pos, lastToken, e))
 
-let counter = ref 0 // Counter for generating unique IDs
-
-let nextId () =
-    let id = !counter
-    counter := !counter + 1
-    id |> string |> (+) "q" // Convert to string and prepend with "q"
-
 let rec Done gc = 
     match gc with
     | Implies(b,c) -> Not (b)
@@ -76,28 +71,42 @@ type Edge = {
     target: string
 }
 
-let rec edges command q1 q2 =
+let rec countNodes command =
     match command with
-    | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
-    | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
-    | ListAssignment (var, expr1, expr2 ) -> [ {source = q1; label = CommandLabel(ListAssignment(var,expr1,expr2));target = q2} ]
-    | Program (c, c') ->
-        let id = nextId ()
-        edges c q1 id @ edges c' id q2
-    | If(gc) -> guardedEdges gc q1 q2
-    | Do(gc) -> guardedEdges gc q1 q1 @ [ {source = q1; label = BoolLabel(Done(gc)) ;target = q2} ]
-    | _ -> []
+    | Skip -> 1
+    | Assignment (var, expr) -> 1
+    | ListAssignment (var, expr1, expr2 ) -> 1
+    | Program (c, c') -> countNodes c + countNodes c'
+    | If(gc) -> countGuadedNodes gc
+    | Do(gc) -> countGuadedNodes gc
+and countGuadedNodes gcommand =
+    match gcommand with
+    | Implies(b,c) -> 1 + countNodes c
+    | GuardedOr(gc,gc1) -> countGuadedNodes gc + countGuadedNodes gc1
 
-and guardedEdges gcommand q1 q2 =
+let rec edges command q1 q2 count =
+    match command with
+    | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ], count
+    | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target =q2}], count
+    | ListAssignment (var, expr1, expr2 ) -> [ {source = q1; label = CommandLabel(ListAssignment(var,expr1,expr2));target = q2} ], count
+    | Program (c, c') ->
+        let count' = countNodes c + count
+        let edge, _ = edges c q1 (createId (count')) count
+        let edge', count'' = edges c' (createId count') q2 count'
+        edge @ edge', count''
+    | If(gc) -> guardedEdges gc q1 q2 count
+    | Do(gc) -> 
+        let edge, count' = guardedEdges gc q1 q1 count
+        {source = q1; label = BoolLabel(Done(gc)) ;target = q2} :: edge, count + 1
+and guardedEdges gcommand q1 q2 count =
     match gcommand with
     | Implies(b,c) ->
-        let id = nextId ()
-        {source = q1; label = BoolLabel(b); target = id} :: edges c id q2
+        let edge, count' = edges c (createId (count + 1)) q2 (count + 1)
+        {source = q1; label = BoolLabel(b); target = createId (count + 1)} :: edge, count'
     | GuardedOr(gc1, gc2) ->
-        let id1 = nextId ()
-        let id2 = nextId ()
-        guardedEdges gc1 q1 q2 @ guardedEdges gc2 q1 q2
-    | _ -> []
+        let edge, count' = guardedEdges gc1 q1 q2 count
+        let edge', count'' = guardedEdges gc2 q1 q2 count'
+        edge @ edge', count''
 
 let rec printLabel label = 
     match label with
@@ -122,6 +131,6 @@ let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with
         | Ok ast -> 
-            counter := 0 // Reset counter
-            { dot = printDot (edges ast "qI" "qF") }
+            let edge, _ = edges ast "qI" "qF" 0
+            { dot = printDot (edge) }
         | Error e -> { dot = "" }
