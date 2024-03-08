@@ -59,10 +59,14 @@ let parse parser src =
         eprintf "Last token: %s" lastToken
         eprintf "\n"
         Error(ParseError(pos, lastToken, e))
+let rec Done gc = 
+    match gc with
+    | Implies(b,c) -> Not (b)
+    | GuardedOr(gc,gc1) -> And (Done gc, Done gc1)
 
 type Label = 
     | CommandLabel of command
-    | GCommandLabel of gcommand
+    | BoolLabel of bool
 
 type Edge = {
     source: string
@@ -78,18 +82,19 @@ let rec edges command q1 q2 =
                          ID <- ID + 1
                          edges c q1 id  @ edges c' id q2
     | If(gc) -> guardedEdges gc q1 q2
+    | Do(gc) -> guardedEdges gc q1 q1 @ [ {source = q1; label = BoolLabel(Done(gc)) ;target = q2} ]
     | _ -> []
 and guardedEdges gcommand q1 q2 = 
     match gcommand with
-    | Implies(b,c) -> {source = q1; label = GCommandLabel(Implies(b, c)); target = "q"} :: edges c "q" q2
+    | Implies(b,c) -> {source = q1; label = BoolLabel(b); target = "q"} :: edges c "q" q2
     // | GuardedOr(c, c1) -> edges c q1 q2 @ edges c1 q1 q2
     | _ -> []
 
-let printLabel label = 
+let rec printLabel label = 
     match label with
     | CommandLabel Skip -> "skip"
     | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
-    | GCommandLabel (Implies(b, _)) -> prettyPrintBool b
+    | BoolLabel (b) -> prettyPrintBool b
     | _ -> "TODO"
 
 let rec printDotEdges edges =
