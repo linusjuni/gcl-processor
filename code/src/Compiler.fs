@@ -6,6 +6,18 @@ open AST
 
 exception ParseError of Position * string * Exception
 
+let rec printExpr expr = 
+    match expr with
+    | Num(x) -> string x
+    | Var(x) -> x
+    | ListElement(x, y) -> sprintf "%s[%s]" x (printExpr y)
+    | TimesExpr(x, y) -> sprintf "(%s * %s)" (printExpr x) (printExpr y)
+    | DivExpr(x, y) -> sprintf "(%s / %s)" (printExpr x) (printExpr y)
+    | PlusExpr(x, y) -> sprintf "(%s + %s)" (printExpr x) (printExpr y)
+    | MinusExpr(x, y) -> sprintf "(%s - %s)" (printExpr x) (printExpr y)
+    | PowExpr(x, y) -> sprintf "(%s ^ %s)" (printExpr x) (printExpr y)
+    | UMinusExpr(x) -> sprintf "-%s" (printExpr x)
+
 let parse parser src =
     let lexbuf = LexBuffer<char>.FromString src
 
@@ -37,16 +49,18 @@ type Edge = {
 let rec edges c q1 q2 =
     match c with
     | Skip -> [ { source = q1; label = CommandLabel(Skip); target = q2 } ]
+    | Assignment (var, expr) -> [ { source = q1; label = CommandLabel(Assignment (var, expr)); target = q2}]
     | _ -> []
 
-let printL l = 
-    match l with
+let printLabel label = 
+    match label with
     | CommandLabel Skip -> "skip"
+    | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
     | _ -> "TODO"
 
 let printDotEdges e =
     match e with
-    | [ e1 ] -> e1.source + " -> " + e1.target + "[label = \"" + (printL e1.label) + "\"];"
+    | [ e1 ] -> e1.source + " -> " + e1.target + "[label = \"" + (printLabel e1.label) + "\"];"
     | _ -> ""
 
 let rec printDot e =
