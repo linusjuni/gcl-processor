@@ -52,10 +52,14 @@ let parse parser src =
         eprintf "Last token: %s" lastToken
         eprintf "\n"
         Error(ParseError(pos, lastToken, e))
+let rec Done gc = 
+    match gc with
+    | Implies(b,c) -> Not (b)
+    | GuardedOr(gc,gc1) -> And (Done gc, Done gc1)
 
 type Label = 
     | CommandLabel of command
-    | GCommandLabel of gcommand
+    | BoolLabel of bool
 
 type Edge = {
     source: string
@@ -71,19 +75,20 @@ let rec edges command q1 q2 ids =
                          let ids' = Seq.tail ids
                          edges c q1 id ids'  @ edges c' id q2 ids'
     | If(gc) -> guardedEdges gc q1 q2 ids
+    | Do(gc) -> guardedEdges gc q1 q1 ids @ [ {source = q1; label = BoolLabel(Done(gc)) ;target = q2} ]
     | _ -> []
 and guardedEdges gcommand q1 q2 ids = 
     match gcommand with
     | Implies(b,c) -> let id = Seq.head ids
-                      {source = q1; label = GCommandLabel(Implies(b, c)); target = id} :: edges c id q2 (Seq.tail ids)
+                      {source = q1; label = BoolLabel(b); target = id} :: edges c id q2 (Seq.tail ids)
     // | GuardedOr(c, c1) -> edges c q1 q2 @ edges c1 q1 q2
     | _ -> []
 
-let printLabel label = 
+let rec printLabel label = 
     match label with
     | CommandLabel Skip -> "skip"
     | CommandLabel (Assignment (var, expr)) -> var + ":=" + printExpr(expr)
-    | GCommandLabel (Implies(b, _)) -> prettyPrintBool b
+    | BoolLabel (b) -> prettyPrintBool b
     | _ -> "TODO"
 
 let rec printDotEdges edges =
@@ -100,5 +105,5 @@ let rec printDot edges =
 let analysis (input: Input) : Output =
     // TODO: change start_expression to start_commands
     match parse Grammar.start_command input.commands with
-        | Ok ast -> { dot = printDot (edges ast "qI" "qF" (Seq.initInfinite (fun i -> "q" + string i))) }
+        | Ok ast -> { dot = printDot (edges ast "qI" "qF" (Seq.initInfinite (fun i -> "q" + string (i+1)))) }
         | Error e -> { dot = "" }
