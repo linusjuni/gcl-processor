@@ -7,7 +7,7 @@
 
 The detailed rules of the mandatory assignment are found [here](README.md).
 
-NOTE: ensure that the master branch of your repository is updated with:
+NOTE: ensure that the main branch of your repository is updated with:
 
 - MacOS, Linux: `./update.sh`
 - Windows: `update.ps1`
@@ -56,4 +56,4 @@ You will need the GCL parser developed in this task to complete the follow-up ta
 
 We encourage you to proactively ask for feedback from the TAs and the teacher.
 
-Please submit your task solution by simply pushing changes to the main (master) branch of your repository. You can do this as many times as you want. We will have a look at the latest update (before the deadline).
+Please submit your task solution by simply pushing changes to the main branch of your repository. You can do this as many times as you want. We will have a look at the latest update (before the deadline).
