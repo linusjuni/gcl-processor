@@ -69,9 +69,9 @@ It is highly recommended to first make a plan of what functions you will have to
 
 We recommend following [Formal Methods, Chapter 1.2] and [Formal Methods, Chapter 2.3] to build an interpreter based on the semantics of GCL programs and their program graphs:
 * You are writing an interpreter for program graphs [Formal Methods, Chapter 1.2], but of course such graphs are generated from GCL programs and that is why you need [Formal Methods, Chapter 2.3].
+* Definition 1.13 defines the concept of execution sequences. The intrepreter needs to produce execution sequences up to a certain length.
 * Definition 1.11 defines the concept of execution steps. You will most likely need to implement a function to perform such execution steps.
 * Definition 1.11 relies on the semantic function `S`, which specifices how the memory is affected by actions (labels in the program graph). You will need to have a look at Definition 2.17, which defines the semantic function for GCL actions. This will in turn require you to implement the functions to evaluate arithmetic and boolean expressions [Formal Methods, Chapter 2.3].
-* Definition 1.12 defines the concept of execution sequence. The intrepreter needs produce execution sequences of a maximum length.
 
 
 ## Feedback & Evaluation
