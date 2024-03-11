@@ -15,8 +15,7 @@ NOTE: ensure that the main branch of your repository is updated with:
 
 ## Goals
 
-The goal of this task is to implement an interpreter
-that executes a GCL program on a given input memory step by step, similarly to the environment `Step-wise Execution` on [formalmethods.dk/fm4fun](http://www.formalmethods.dk/fm4fun/) and `Interpreter` on `Inspectify`.
+The goal of this task is to implement an interpreter that executes a GCL program on a given input memory step by step, similarly to the environment `Step-wise Execution` on [formalmethods.dk/fm4fun](http://www.formalmethods.dk/fm4fun/) and `Interpreter` on `Inspectify`.
 
 For example, the screenshot below depicts the (complete) execution sequence computed for a program that assigns to `z` the maximum of `x` and `y` for an initial memory in which `x` is assigned to `5`, `y` is assigned to `2` and `z` is assigned to `0`.
 After taking two actions, we reach the final node, i.e. execution successfully terminates, and the final memory assigns `5` to `z`.
@@ -39,7 +38,7 @@ The above function `analysis` takes as input
 - an initial memory, and 
 - an integer `trace_length`.
 
-As an output, the function should produce an execution sequence of length `trace_size` that starts in the initial node of the program's program graph and the provided initial memory. 
+As an output, the function should produce an execution sequence of length `trace_length` that starts in the initial node of the program's program graph and the provided initial memory. 
 If no execution sequence of length `trace_length` exists, the function should produce an execution sequence that is complete or gets stuck.
 
 More precisely, the function must produce an output with the following information:
@@ -78,8 +77,5 @@ We recommend following [Formal Methods, Chapter 1.2] and [Formal Methods, Chapte
 ## Feedback & Evaluation
 
 You can evaluate your solution by comparing the result to the ones provided by the `fm4fun` or `inspectify` tools.
-
-You can also peridically see an evaluation of the last solution that you (and all other groups) have pushed on our [scoreboard](https://checkr.compute.dtu.dk/scoreboard). 
-The results are anonymized using the code at the end of your group's repository name.
 
 We encourage you to proactively ask for feedback from the TAs and the teacher.
