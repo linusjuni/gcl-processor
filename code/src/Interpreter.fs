@@ -1,6 +1,5 @@
 module Interpreter
 open Io.Interpreter
-open Io.GCL
 
 let analysis (input: Input) : Output =
     failwith "Interpreter not yet implemented" // TODO: start here
