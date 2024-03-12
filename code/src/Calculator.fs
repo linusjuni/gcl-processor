@@ -4,6 +4,7 @@ open Io.Calculator
 open AST
 open System
 
+#nowarn "25"
 let rec evaluate (expr: expr) : Result<int, string> =
     match expr with 
     | Num(x) -> Ok x
