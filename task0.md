@@ -1,6 +1,6 @@
 # Task 0: Building a calculator
 
-NOTE: ensure that the master branch of your repository is updated with:
+NOTE: ensure that the main branch of your repository is updated with:
 
 - MacOS, Linux: `./update.sh`
 - Windows: `update.ps1`
