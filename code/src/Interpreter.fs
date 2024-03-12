@@ -1,14 +1,7 @@
 module Interpreter
 open Io.Interpreter
-
-let analysis (input: Input) : Output =
-    failwith "Interpreter not yet implemented" // TODO: start here
-
-    { initial_node = ""
-      final_node = ""
-      dot = ""
-      trace = []
-      termination = Terminated }
+open Io.GCL
+open AST
 
 let getValueOfVariable variable (memory: InterpreterMemory) : int64 =
     Map.find variable memory.variables
