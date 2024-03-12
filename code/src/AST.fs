@@ -1,10 +1,10 @@
 // This file implements a module where we define a data type "expr"
 // to store represent arithmetic expressions
 module AST
-
+open Io.GCL
 type expr =
     | Num of int
-    | Var of string
+    | Var of Variable
     | ListElement of (string * expr)
     | TimesExpr of (expr * expr)
     | DivExpr of (expr * expr)
