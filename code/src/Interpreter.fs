@@ -23,8 +23,8 @@ let updateArray array value (memory: InterpreterMemory) : InterpreterMemory =
 let rec arithmeticSemantics mem expr =
   match expr with
   | Num(n) -> int64(n)
-  | Var(v: Variable) -> getValueOfVariable v mem
-  | ListElement(a : Array,e) -> getArrayElement mem a (int(arithmeticSemantics mem e))
+  | Var(v) -> getValueOfVariable v mem
+  | ListElement(a,e) -> getArrayElement mem a (int(arithmeticSemantics mem e))
   | UMinusExpr(e) -> - arithmeticSemantics mem expr
   | PowExpr(e1,e2) -> int64(float(arithmeticSemantics mem e1) ** float(arithmeticSemantics mem e2))
   | TimesExpr(e1,e2) -> arithmeticSemantics mem e1 * arithmeticSemantics mem e2
