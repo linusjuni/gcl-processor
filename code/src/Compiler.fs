@@ -116,7 +116,7 @@ let rec edges command q1 q2 count (determinism: Determinism) =
           label = BoolLabel(Done(gc))
           target = q2 }
         :: edge,
-        count + 1
+        count' + 1
 
 and guardedEdges gcommand q1 q2 count determinism (previousBool: bool) =
     match gcommand with
