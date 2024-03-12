@@ -62,7 +62,9 @@ let rec Done gc =
     | GuardedOr(gc, gc1) -> And(Done gc, Done gc1)
 
 type Label =
-    | CommandLabel of command
+    | CommandSkipLabel
+    | CommandAssignmentLabel of string * expr
+    | CommandListAssignmentLabel of string * expr * expr
     | BoolLabel of bool
 
 type Edge =
@@ -84,26 +86,26 @@ and countGuadedNodes gcommand =
     | Implies(b, c) -> 1 + countNodes c
     | GuardedOr(gc, gc1) -> countGuadedNodes gc + countGuadedNodes gc1
 
-let rec edges command q1 q2 count (determinism: Determinism) =
+let rec edges command q1 q2 count determinism =
     match command with
     | Skip ->
         [ { source = q1
-            label = CommandLabel(Skip)
+            label = CommandSkipLabel
             target = q2 } ],
         count
     | Assignment(var, expr) ->
         [ { source = q1
-            label = CommandLabel(Assignment(var, expr))
+            label = CommandAssignmentLabel(var, expr)
             target = q2 } ],
         count
     | ListAssignment(var, expr1, expr2) ->
         [ { source = q1
-            label = CommandLabel(ListAssignment(var, expr1, expr2))
+            label = CommandListAssignmentLabel(var, expr1, expr2)
             target = q2 } ],
         count
     | Program(c, c') ->
         let count' = countNodes c + count
-        let edge, _ = edges c q1 (createId (count')) count determinism
+        let edge, _ = edges c q1 (createId count') count determinism
         let edge', count'' = edges c' (createId count') q2 count' determinism
         edge @ edge', count''
     | If(gc) ->
@@ -118,7 +120,8 @@ let rec edges command q1 q2 count (determinism: Determinism) =
         :: edge,
         count' + 1
 
-and guardedEdges gcommand q1 q2 count determinism (previousBool: bool) =
+// Returns (edge, count, nextBool)
+and guardedEdges gcommand q1 q2 count determinism previousBool =
     match gcommand with
     | Implies(b, c) ->
         let edge, count' = edges c (createId (count + 1)) q2 (count + 1) determinism
@@ -141,9 +144,9 @@ and guardedEdges gcommand q1 q2 count determinism (previousBool: bool) =
 
 let rec printLabel label =
     match label with
-    | CommandLabel Skip -> "skip"
-    | CommandLabel(Assignment(var, expr)) -> var + ":=" + printExpr (expr)
-    | CommandLabel(ListAssignment(var, expr1, expr2)) -> var + "[" + printExpr (expr1) + "] := " + printExpr (expr2)
+    | CommandSkipLabel -> "skip"
+    | CommandAssignmentLabel(var, expr) -> var + ":=" + printExpr (expr)
+    | CommandListAssignmentLabel(var, expr1, expr2) -> var + "[" + printExpr (expr1) + "] := " + printExpr (expr2)
     | BoolLabel(b) -> prettyPrintBool b
 
 let rec printDotEdges edges =
