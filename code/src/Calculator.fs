@@ -7,7 +7,7 @@ open System
 #nowarn "25"
 let rec evaluate (expr: expr) : Result<int, string> =
     match expr with 
-    | Num(x) -> Ok x
+    | Num(x) -> Ok <| int x
     | PlusExpr(x ,y) -> binaryOperator x y (+)
     | MinusExpr(x, y) -> binaryOperator x y (-)
     | TimesExpr(x, y) -> binaryOperator x y (*)
