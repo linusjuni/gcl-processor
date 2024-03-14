@@ -120,7 +120,7 @@ and guardedEdgesHelper gcommand q1 q2 nodesCount determinism previousBool : Edge
 let rec printLabel label =
     match label with
     | CommandSkipLabel -> "skip"
-    | CommandAssignmentLabel(var, expr) -> var + ":=" + printExpr (expr)
+    | CommandAssignmentLabel(var, expr) -> var + " := " + printExpr (expr)
     | CommandListAssignmentLabel(var, expr1, expr2) -> var + "[" + printExpr (expr1) + "] := " + printExpr (expr2)
     | BoolLabel(b) -> prettyPrintBool b
 
