@@ -69,14 +69,14 @@ let rec edges command q1 q2 nodesCount determinism =
         edge @ edge', totalNodesCount
     | If(gc) -> guardedEdges gc q1 q2 nodesCount determinism
     | Do(gc) ->
-        let edge, nodesCount = guardedEdges gc q1 q1 nodesCount determinism
+        let edge, nodesCount' = guardedEdges gc q1 q1 nodesCount determinism
 
         let doneEdge =
             { source = q1
               label = BoolLabel(Done(gc))
               target = q2 }
 
-        doneEdge :: edge, nodesCount + 1
+        doneEdge :: edge, nodesCount' + 1
 
 and guardedEdges gcommand q1 q2 nodesCount determinism =
     let edge, nodesCount, _ =
