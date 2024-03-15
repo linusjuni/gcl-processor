@@ -7,6 +7,7 @@ open Compiler
 
 exception StuckError 
 exception NoEdgesError
+exception RaisedByNegative
 
 let getValueOfVariable variable (memory: InterpreterMemory) : int64 =
     Map.find variable memory.variables
@@ -38,7 +39,11 @@ let rec arithmeticSemantics mem expr =
   | Var(v) -> getValueOfVariable v mem
   | ListElement(array,e) -> getArrayElement mem array (int(arithmeticSemantics mem e))
   | UMinusExpr(e) -> - arithmeticSemantics mem e
-  | PowExpr(e1,e2) -> pown (arithmeticSemantics mem e1) (int(arithmeticSemantics mem e2))
+  | PowExpr(e1,e2) -> 
+      let exponent = int(arithmeticSemantics mem e2)
+      if exponent < 0 
+          then raise RaisedByNegative
+          else pown (arithmeticSemantics mem e1) exponent
   | TimesExpr(e1,e2) -> arithmeticSemantics mem e1 * arithmeticSemantics mem e2
   | DivExpr(e1,e2) -> arithmeticSemantics mem e1 / arithmeticSemantics mem e2
   | PlusExpr(e1,e2) -> arithmeticSemantics mem e1 + arithmeticSemantics mem e2
@@ -139,7 +144,7 @@ let rec executeSteps node programGraph memory traceLength =
             else 
                 [], Running
     with 
-    | StuckError -> [], Stuck
+    | StuckError | RaisedByNegative -> [], Stuck
     | NoEdgesError -> [], Terminated
 
 let analysis (input: Input) : Output =
