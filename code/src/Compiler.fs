@@ -25,46 +25,31 @@ let rec Done gc =
     | Implies(b, c) -> Not(b)
     | GuardedOr(gc, gc1) -> And(Done gc, Done gc1)
 
-let rec NodesInCommand command =
-    match command with
-    | Skip -> 1
-    | Assignment(var, expr) -> 1
-    | ListAssignment(var, expr1, expr2) -> 1
-    | Program(c, c') -> NodesInCommand c + NodesInCommand c'
-    | If(gc) -> NodesInGuardedCommand gc
-    | Do(gc) -> NodesInGuardedCommand gc
-
-and NodesInGuardedCommand gcommand =
-    match gcommand with
-    | Implies(b, c) -> 1 + NodesInCommand c
-    | GuardedOr(gc, gc1) -> NodesInGuardedCommand gc + NodesInGuardedCommand gc1
-
 let rec edges command q1 q2 nodesCount determinism =
     match command with
     | Skip ->
         [ { source = q1
             label = CommandSkipLabel
             target = q2 } ],
-        nodesCount
+            1 + nodesCount
     | Assignment(var, expr) ->
         [ { source = q1
             label = CommandAssignmentLabel(var, expr)
             target = q2 } ],
-        nodesCount
+            1 + nodesCount
     | ListAssignment(var, expr1, expr2) ->
         [ { source = q1
             label = CommandListAssignmentLabel(var, expr1, expr2)
             target = q2 } ],
-        nodesCount
+            1 + nodesCount
     | Program(c, c') ->
-        // The the id of the end node of the left program must be computed before edges are computed
-        let nodesInLeftProgram = NodesInCommand c + nodesCount
+        let intermediateNode = createNodeIdFromNodeCount (nodesCount + 1)
 
-        let edge, _ =
-            edges c q1 (createNodeIdFromNodeCount nodesInLeftProgram) nodesCount determinism
+        let edge, nodesCount' =
+            edges c q1 intermediateNode (nodesCount+1) determinism
 
         let edge', totalNodesCount =
-            edges c' (createNodeIdFromNodeCount nodesInLeftProgram) q2 nodesInLeftProgram determinism
+            edges c' intermediateNode q2 nodesCount' determinism
 
         edge @ edge', totalNodesCount
     | If(gc) -> guardedEdges gc q1 q2 nodesCount determinism
