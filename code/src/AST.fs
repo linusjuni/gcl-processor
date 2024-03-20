@@ -3,7 +3,7 @@
 module AST
 open Io.GCL
 type expr =
-    | Num of int64
+    | Num of int
     | Var of Variable
     | ListElement of (string * expr)
     | TimesExpr of (expr * expr)
