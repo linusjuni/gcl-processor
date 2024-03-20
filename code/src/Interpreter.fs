@@ -12,7 +12,7 @@ exception RaisedByNegative
 let getValueOfVariable variable (memory: InterpreterMemory) : int =
     int <| Map.find variable memory.variables
 
-let getArray array (memory: InterpreterMemory) : List<int64> =
+let getArray array (memory: InterpreterMemory) : List<int> =
     Map.find array memory.arrays
 
 let getArrayElement mem array index : int =
