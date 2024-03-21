@@ -1,0 +1,15 @@
+{ 0 <= n }
+r := 0;
+x := 0;
+do[false] // TODO: replace `false` by a suitable invariant for the outer loop
+  x < n ->
+    y := 0;
+    do[false] // TODO: replace `false` by a suitable invariant for the inner loop
+      y < n -> 
+        r := r + 1;
+        y := y + 1
+    od;
+    { y = n } // add your inner loop invariant here
+    x := x + 1 
+od
+{ r = n * n }

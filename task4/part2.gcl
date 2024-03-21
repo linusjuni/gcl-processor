@@ -1,0 +1,32 @@
+{ a = A 
+  & b = B 
+  & c = C 
+  & A != B & B != C & A != C }
+if
+   a < b & a < c -> 
+    skip 
+[] b < a & b < c -> 
+    t := a; 
+    a := b; 
+    b := t 
+[] c < a & c < b -> 
+    t := a; 
+    a := c; 
+    c := t
+fi;
+if
+   c > a & c > b -> 
+    skip 
+[] b > c & b > a -> 
+    t := b; 
+    b := c; 
+    c := t 
+[] a > n & a > c -> 
+    t := a; 
+    a := c; 
+    c := t
+fi
+{ a = min(A, min(B,C)) 
+  & c = max(A, max(B,C)) 
+  & (b = A | b = B | b = C) 
+  & b != a & b != c  }
