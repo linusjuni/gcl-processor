@@ -9,14 +9,14 @@ exception StuckError
 exception NoEdgesError
 exception RaisedByNegative
 
-let getValueOfVariable variable (memory: InterpreterMemory) : int64 =
-    Map.find variable memory.variables
+let getValueOfVariable variable (memory: InterpreterMemory) : int =
+    int <| Map.find variable memory.variables
 
-let getArray array (memory: InterpreterMemory) : List<int64> =
+let getArray array (memory: InterpreterMemory) : List<int> =
     Map.find array memory.arrays
 
-let getArrayElement mem array index =
-    (getArray array mem).Item(index)
+let getArrayElement mem array index : int =
+    int <| (getArray array mem).Item(index)
 
 let updateVariable variable value (memory: InterpreterMemory) : InterpreterMemory =
     { variables = Map.add variable value memory.variables
@@ -34,20 +34,23 @@ let updateArrayElement array index value (memory: InterpreterMemory) : Interpret
       arrays = Map.add array updatedArray memory.arrays }
 
 let rec arithmeticSemantics mem expr =
-  match expr with
-  | Num(n) -> n
-  | Var(v) -> getValueOfVariable v mem
-  | ListElement(array,e) -> getArrayElement mem array (int(arithmeticSemantics mem e))
-  | UMinusExpr(e) -> - arithmeticSemantics mem e
-  | PowExpr(e1,e2) -> 
-      let exponent = int(arithmeticSemantics mem e2)
-      if exponent < 0 
-          then raise RaisedByNegative
-          else pown (arithmeticSemantics mem e1) exponent
-  | TimesExpr(e1,e2) -> arithmeticSemantics mem e1 * arithmeticSemantics mem e2
-  | DivExpr(e1,e2) -> arithmeticSemantics mem e1 / arithmeticSemantics mem e2
-  | PlusExpr(e1,e2) -> arithmeticSemantics mem e1 + arithmeticSemantics mem e2
-  | MinusExpr(e1,e2) -> arithmeticSemantics mem e1 - arithmeticSemantics mem e2
+    try 
+        match expr with
+        | Num(n) -> n
+        | Var(v) -> getValueOfVariable v mem
+        | ListElement(array,e) -> getArrayElement mem array (int(arithmeticSemantics mem e))
+        | UMinusExpr(e) -> - arithmeticSemantics mem e
+        | PowExpr(e1,e2) -> 
+          let exponent = int(arithmeticSemantics mem e2)
+          if exponent < 0 
+              then raise RaisedByNegative
+              else pown (arithmeticSemantics mem e1) exponent
+        | TimesExpr(e1,e2) -> arithmeticSemantics mem e1 * arithmeticSemantics mem e2
+        | DivExpr(e1,e2) -> arithmeticSemantics mem e1 / arithmeticSemantics mem e2
+        | PlusExpr(e1,e2) -> arithmeticSemantics mem e1 + arithmeticSemantics mem e2
+        | MinusExpr(e1,e2) -> arithmeticSemantics mem e1 - arithmeticSemantics mem e2
+    with
+    | :? System.OverflowException -> raise StuckError
 
 let rec boolSemantics mem boolExpr =
   match boolExpr with
