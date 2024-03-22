@@ -7,3 +7,22 @@ if
       c := b
 fi 
 { a = b & b = c } 
+
+{ true }
+{ (a = b ==> (a = b & b = a) & ( a = b ))
+& (a > b ==> ( a = a & a = a ) & (a > b))}
+if 
+   a = b -> 
+      { (a = b & b = a) & ( a = b )}
+      { a = b & b = a }
+      c := a
+      { a = b & b = c } 
+[] a > b -> 
+      { ( a = a & a = a ) & (a > b)} 
+      { a = a & a = a } 
+      b := a; 
+      { a = b & b = b } 
+      c := b
+      { a = b & b = c } 
+fi 
+{ a = b & b = c } 

@@ -10,3 +10,16 @@ do[false] // TODO: replace `false` by a suitable invariant
     i := i + 1
 od
 { r = fib(n) } // fib(n) is the n-th Fibonacci number
+
+{ 0 <= n }
+r := 0;
+s := 1;
+i := 0;
+do[0 <= i & i <= n & r = fib(i) & s < = s + r] // TODO: replace `false` by a suitable invariant
+  i != n -> 
+    t := s;
+    s := r + s;
+    r := t;
+    i := i + 1
+od
+{ r = fib(n) } // fib(n) is the n-th Fibonacci number
