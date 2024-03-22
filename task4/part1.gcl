@@ -1,0 +1,9 @@
+{ true }
+if 
+   a = b -> 
+      c := a
+[] a > b -> 
+      b := a; 
+      c := b
+fi 
+{ a = b & b = c } 
