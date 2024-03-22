@@ -30,3 +30,264 @@ fi
   & c = max(A, max(B,C)) 
   & (b = A | b = B | b = C) 
   & b != a & b != c  }
+
+// IMPLEMENTATION
+
+{ a = A 
+  & b = B 
+  & c = C 
+  & A != B & B != C & A != C }
+if
+  a < b & a < c ->
+    { ((a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != c)
+    | (a = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != a & c != b)
+    | (c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != a))
+    & (a < b & a < c) }
+    { (a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != c)
+    | (a = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != a & c != b)
+    | (c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != a)} 
+    skip
+    { (a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != c)
+    | (a = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != a & c != b)
+    | (c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != a)} 
+[] b < a & b < c ->
+    { ((b = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (a = A | a = B | a = C) 
+    & a != b & a != c)
+    | (b = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != b & c != a)
+    | (c = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (a = A | a = B | a = C) 
+    & a != c & a != b)) 
+    & (b < a & b < c)}
+    { (b = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (a = A | a = B | a = C) 
+    & a != b & a != c)
+    | (b = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != b & c != a)
+    | (c = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (a = A | a = B | a = C) 
+    & a != c & a != b)}
+    t := a;
+    { (b = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (t = A | t = B | t = C) 
+    & t != b & t != c)
+    | (b = min(A, min(B,C)) 
+    & t = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != b & c != t)
+    | (c = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (t = A | t = B | t = C) 
+    & t != c & t != b)} 
+    a := b;
+    { (a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (t = A | t = B | t = C) 
+    & t != a & t != c)
+    | (a = min(A, min(B,C)) 
+    & t = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != a & c != t)
+    | (c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (t = A | t = B | t = C) 
+    & t != c & t != a)} 
+    b := t
+    { (a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != c)
+    | (a = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != a & c != b)
+    | (c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != a)} 
+[] c < a & c < b ->
+    { ((c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != a)
+    | (c = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (a = A | a = B | a = C) 
+    & a != c & a != b)
+    | (a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != c))
+    & (c < a & c < b)}
+    { (c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != a)
+    | (c = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (a = A | a = B | a = C) 
+    & a != c & a != b)
+    | (a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != c)}
+    t := a;
+    { (c = min(A, min(B,C)) 
+    & t = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != t)
+    | (c = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (t = A | t = B | t = C) 
+    & t != c & t != b)
+    | (t = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != t & b != c)} 
+    a := c;
+    { (a = min(A, min(B,C)) 
+    & t = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != t)
+    | (a = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (t = A | t = B | t = C) 
+    & t != a & t != b)
+    | (t = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != t & b != a)} 
+    c := t
+    { (a = min(A, min(B,C)) 
+    & c = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != a & b != c)
+    | (a = min(A, min(B,C)) 
+    & b = max(A, max(B,C)) 
+    & (c = A | c = B | c = C) 
+    & c != a & c != b)
+    | (c = min(A, min(B,C)) 
+    & a = max(A, max(B,C)) 
+    & (b = A | b = B | b = C) 
+    & b != c & b != a)}
+fi;
+{ (a = min(A, min(B,C)) 
+  & c = max(A, max(B,C)) 
+  & (b = A | b = B | b = C) 
+  & b != a & b != c)
+  | (a = min(A, min(B,C)) 
+  & b = max(A, max(B,C)) 
+  & (c = A | c = B | c = C) 
+  & c != a & c != b)
+  | (c = min(A, min(B,C)) 
+  & a = max(A, max(B,C)) 
+  & (b = A | b = B | b = C) 
+  & b != c & b != a)}
+if
+   c > a & c > b ->
+    { (a = min(A, min(B,C)) 
+      & c = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != a & b != c)
+      & (c > a & c > b) }
+    { a = min(A, min(B,C)) 
+      & c = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != a & b != c } 
+    skip
+    { a = min(A, min(B,C)) 
+      & c = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != a & b != c } 
+[] b > c & b > a ->
+    { (a = min(A, min(B,C)) 
+      & b = max(A, max(B,C)) 
+      & (c = A | c = B | c = C) 
+      & c != a & c != b) 
+      & (b > c & b > a)}
+    { a = min(A, min(B,C)) 
+      & b = max(A, max(B,C)) 
+      & (c = A | c = B | c = C) 
+      & c != a & c != b }
+    t := b;
+    { a = min(A, min(B,C)) 
+      & t = max(A, max(B,C)) 
+      & (c = A | c = B | c = C) 
+      & c != a & c != t } 
+    b := c;
+    { a = min(A, min(B,C)) 
+      & t = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != a & b != t } 
+    c := t
+    { a = min(A, min(B,C)) 
+      & c = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != a & b != c } 
+[] a > n & a > c ->
+    { (c = min(A, min(B,C)) 
+      & a = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != c & b != a)
+      & (a > n & a > c) }
+    { c = min(A, min(B,C)) 
+      & a = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != c & b != a }
+    t := a;
+    { c = min(A, min(B,C)) 
+      & t = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != c & b != t } 
+    a := c;
+    { a = min(A, min(B,C)) 
+      & t = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != a & b != t } 
+    c := t
+    { a = min(A, min(B,C)) 
+      & c = max(A, max(B,C)) 
+      & (b = A | b = B | b = C) 
+      & b != a & b != c }
+fi
+{ a = min(A, min(B,C)) 
+  & c = max(A, max(B,C)) 
+  & (b = A | b = B | b = C) 
+  & b != a & b != c }
