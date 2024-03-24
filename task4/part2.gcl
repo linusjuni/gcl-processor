@@ -21,7 +21,7 @@ if
     t := b; 
     b := c; 
     c := t 
-[] a > n & a > c -> 
+[] a > b & a > c -> 
     t := a; 
     a := c; 
     c := t
