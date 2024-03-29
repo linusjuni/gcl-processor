@@ -13,3 +13,32 @@ do[false] // TODO: replace `false` by a suitable invariant for the outer loop
     x := x + 1 
 od
 { r = n * n }
+
+// Inner loop is correct when:
+{ 0 <= n }
+y := 0;
+r := x; // This represents how far the outer loop is
+do[y <= n & r = x + y]
+  y < n -> 
+    r := r + 1;
+    y := y + 1
+od
+{ y = n }
+
+// This is how for I have gotten so far
+{ 0 <= n }
+r := 0;
+x := 0;
+do[x <= n & r = n * x] 
+  x < n ->
+    y := 0;
+    do[y <= n & r = n * x + y]
+      y < n -> 
+        r := r + 1;
+        y := y + 1
+    od;
+    { y = n & y <= n & r = n * x + y } // add your inner loop invariant here
+    x := x + 1 
+od
+{ r = n * n }
+
