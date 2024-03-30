@@ -4,7 +4,7 @@ r := 1;
 { 0 <= 0 & 0 <= n & r = exp(e, 0) }
 i := 0;
 { 0 <= i & i <= n & r = exp(e, i) }
-do[0 <= i & i <= n & r = exp(e, i)] // TODO: replace `false` by a suitable invariant
+do[0 <= i & i <= n & r = exp(e, i)]
   i != n ->
     { (0 <= i & i <= n & r = exp(e, i)) & (0 <= (i + 1) & (i + 1) <= n & (e * r) = exp(e, (i + 1)))}
     { 0 <= (i + 1) & (i + 1) <= n & (e * r) = exp(e, (i + 1)) }
