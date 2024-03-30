@@ -1,19 +1,5 @@
 { 0 <= n }
 r := 0;
-i := 0;
-s := 0;
-t := 0;
-do[false] // TODO: replace `false` by a suitable invariant
-  i != n -> 
-    r := r + s + t + 1;
-    s := s + 2 * t + 3;
-    t := t + 3;
-    i := i + 1
-od
-{ r = n*n*n }
-
-{ 0 <= n }
-r := 0;
 {0 <= n & 0 = 3*0 & r = 0*0*0 & 0 = 0*0}
 i := 0;
 {i <= n & 0 = 3*i & r = i*i*i & 0 = 0*i}
