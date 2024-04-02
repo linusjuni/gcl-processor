@@ -42,3 +42,30 @@ do[x <= n & r = n * x]
 od
 { r = n * n }
 
+{ 0 <= n }
+{0 <= n & 0 + (n-0) * n  =  n * n & 0 <= n}
+r := 0;
+{0 <= n & r + (n-0) * n  =  n * n & 0 <= n}
+x := 0;
+{x <= n & r + (n-x) * n  =  n * n & 0 <= n}
+do[x <= n & r + (n-x) * n  =  n * n & 0 <= n] 
+  x < n -> {x <= n & r + (n-x) * n  =  n * n & 0 <= n & x < n}
+    {0 <= n & r = 0 + x*n & 0 <= n & x < n}
+    y := 0;
+    {y <= n & r = y + x*n & 0 <= n & x < n}
+    do[y <= n & r = y + x*n & 0 <= n & x < n] 
+      y < n -> {y <= n & r = y + x*n & 0 <= n & x < n & y < n}
+        {y+1 <= n & r+1 = y+1 + x*n & 0 <= n & x < n}
+        r := r + 1;
+        {y+1 <= n & r = y+1 + x*n & 0 <= n & x < n}
+        y := y + 1
+        {y <= n & r = y + x*n & 0 <= n & x < n}
+    od;
+    {y <= n & r = y + x*n & 0 <= n & !(y < n) & x < n }
+    
+    {x+1 <= n & r + (n-(x+1)) * n  =  n * n & 0 <= n} 
+    x := x + 1 
+    {x <= n & r + (n-x) * n  =  n * n & 0 <= n}
+od
+{x <= n & r + (n-x) * n  =  n * n & 0 <= n & !(x < n)}
+{ r = n * n }
