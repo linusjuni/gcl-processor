@@ -1,3 +1,4 @@
 {
-    "FSharp.autoRevealInExplorer": "disabled"
+    "FSharp.autoRevealInExplorer": "disabled",
+    "FSharp.inlayHints.parameterNames": false
 }
