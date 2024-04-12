@@ -87,7 +87,7 @@ let rec findVariablesBool bool  =
 let rec setToFlows flowFrom flowTo = 
     match Set.toList flowFrom with
     | [] -> Set.empty
-    | x::xs -> Set.union (Set[({from = flowTo ; into = x})]) (setToFlows (Set.ofList xs) flowTo)
+    | x::xs -> Set.union (Set[({from = x ; into = flowTo})]) (setToFlows (Set.ofList xs) flowTo)
 
 let rec implicitDeps gc =  
     match gc with
