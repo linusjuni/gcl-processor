@@ -10,9 +10,9 @@ type VariableClassification =
 
 let rec isTransitive lattice fromLevel intoLevel = 
     let flowsFromLevel = List.where (fun element -> element.from = fromLevel) lattice.rules
-    List.fold (checkElement lattice fromLevel intoLevel) false flowsFromLevel
+    List.fold (checkElement lattice intoLevel) false flowsFromLevel
 
-and checkElement lattice fromLevel intoLevel state element =
+and checkElement lattice intoLevel state element =
     let bool = 
         if element.into = intoLevel 
             then true 
@@ -31,7 +31,7 @@ let intoVariableIterator lattice fromVariable flowsAllowed variable level =
     let intoVariable = 
         { variable = variable 
           level = level}
-    if isFlowAllowed lattice intoVariable.level fromVariable.level
+    if isFlowAllowed lattice fromVariable.level intoVariable.level
         then
             let flow = 
                 { from = fromVariable.variable 
