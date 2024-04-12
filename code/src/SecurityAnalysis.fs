@@ -87,7 +87,7 @@ let rec findVariablesBool bool  =
 let rec setToFlows flowFrom flowTo = 
     match Set.toList flowFrom with
     | [] -> Set.empty
-    | x::xs -> Set.union (Set[({from = flowTo ; into = x})]) (setToFlows xs flowTo)
+    | x::xs -> Set.union (Set[({from = flowTo ; into = x})]) (setToFlows (Set.ofList xs) flowTo)
 
 let rec implicitDeps gc =  
     match gc with
@@ -110,7 +110,7 @@ and actualFlowsGC gcommand deps =
 let analysis (input: Input) : Output =
     match parse Grammar.start_command input.commands with 
     | Ok ast -> 
-        let actualFlows, _ = actualFlows ast Set.empty
+        let actualFlows = Set.toList (actualFlows ast Set.empty)
         let allowedFlows = allowedFlows input.lattice input.classification
         let violatingFlows = violatingFlows actualFlows allowedFlows
         let isSecure = List.isEmpty violatingFlows
