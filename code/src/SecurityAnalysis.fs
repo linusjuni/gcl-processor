@@ -61,33 +61,31 @@ let rec findVariablesExpr expr =
     | Num n -> Set.empty
     | Var(s)-> Set[s]
     | ListElement(var,expr) -> Set.union Set[var] (findVariablesExpr expr)
-    | TimesExpr(expr1, expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
-    | DivExpr(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
-    | PlusExpr(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
-    | MinusExpr(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
+    | TimesExpr(expr1, expr2) 
+    | DivExpr(expr1,expr2) 
+    | PlusExpr(expr1,expr2)
+    | MinusExpr(expr1,expr2)
     | PowExpr(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
     | UMinusExpr(expr) -> findVariablesExpr(expr)
 
 let rec findVariablesBool bool  = 
     match bool with
-    | True -> Set.empty
+    | True
     | False -> Set.empty
-    | And(b1,b2) -> Set.union (findVariablesBool b1) (findVariablesBool b2)
-    | Or(b1,b2) -> Set.union (findVariablesBool b1) (findVariablesBool b2)
     | Not(b) -> findVariablesBool b
-    | ShortAnd(b1,b2) -> Set.union (findVariablesBool b1) (findVariablesBool b2)
+    | And(b1,b2)
+    | Or(b1,b2)
+    | ShortAnd(b1,b2)
     | ShortOr(b1,b2) -> Set.union (findVariablesBool b1) (findVariablesBool b2)
-    | Equal(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
-    | NotEqual(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
-    | Less(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
-    | LessEqual(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
-    | Greater(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
+    | Equal(expr1,expr2) 
+    | NotEqual(expr1,expr2)
+    | Less(expr1,expr2) 
+    | LessEqual(expr1,expr2)
+    | Greater(expr1,expr2)
     | GreaterEqual(expr1,expr2) -> Set.union (findVariablesExpr expr1) (findVariablesExpr expr2)
 
 let rec setToFlows flowFrom flowTo = 
-    match Set.toList flowFrom with
-    | [] -> Set.empty
-    | x::xs -> Set.union (Set[({from = x ; into = flowTo})]) (setToFlows (Set.ofList xs) flowTo)
+    Set.fold (fun state element -> Set.union (Set.singleton {from = element ; into = flowTo}) state) Set.empty flowFrom
 
 let rec implicitDeps gc =  
     match gc with
