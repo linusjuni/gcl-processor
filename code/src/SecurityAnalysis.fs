@@ -34,8 +34,8 @@ let intoVariableIterator lattice fromVariable flowsAllowed variable level =
     if isFlowAllowed lattice intoVariable.level fromVariable.level
         then
             let flow = 
-                { from = intoVariable.variable 
-                  into = fromVariable.variable}
+                { from = fromVariable.variable 
+                  into = intoVariable.variable}
             flow::flowsAllowed 
         else
             flowsAllowed
