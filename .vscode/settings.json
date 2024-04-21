@@ -1,4 +1,5 @@
 {
     "FSharp.autoRevealInExplorer": "disabled",
-    "FSharp.inlayHints.parameterNames": false
+    "FSharp.inlayHints.parameterNames": false,
+    "FSharp.suggestGitignore": false
 }
