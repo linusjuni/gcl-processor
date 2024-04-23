@@ -21,7 +21,7 @@ let abstract_power =
     ]
 let abstract_divison  =
         Map.ofList [
-        ((Negative,Negative), [Positive]);
+        ((Negative,Negative), [Positive; Zero]);
         ((Negative,Zero), List.empty);
         ((Negative,Positive), [Negative]);
 
@@ -31,7 +31,7 @@ let abstract_divison  =
 
         ((Positive,Negative), [Negative]);
         ((Positive,Zero), List.empty);
-        ((Positive,Positive), [Positive]);
+        ((Positive,Positive), [Positive; Zero]);
     ]
 let abstract_plus  =
         Map.ofList [
