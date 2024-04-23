@@ -93,7 +93,7 @@ let abstract_lessThan =
     ]
 let abstract_equals = 
     Map.ofList [
-        ((Negative,Negative),   [true]);
+        ((Negative,Negative),   [true;false]);
         ((Negative,Zero),       [false]);
         ((Negative,Positive),   [false]);
 
@@ -103,7 +103,7 @@ let abstract_equals =
 
         ((Positive,Negative),   [false]);
         ((Positive,Zero),       [false]);
-        ((Positive,Positive),   [true]);
+        ((Positive,Positive),   [true;false]);
     ]
 let abstract_notEquals = 
     Map.ofList [
