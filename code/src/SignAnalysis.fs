@@ -303,6 +303,8 @@ let rec boolSemantics (action : bool) (M:List<SignMemory>) =
 
 let reAssignVariable (variableMemory : Map<Variable, Sign>) variable (signs : Sign) =
     variableMemory |> Map.remove variable |> Map.add variable signs
+let reAssignList (arrayMemory : Map<Array, List<Sign>>) variable (signs : List<Sign>) =
+    arrayMemory |> Map.remove variable |> Map.add variable signs
 
 let rec unwrapS key signs varMem arrayMem = 
     match signs with
@@ -319,9 +321,9 @@ let rec arithmeticSemantics (str : string) (expr: expr) (M:List<SignMemory>) acc
 (*let rec unwrapArrayS2 *)
 
 let rec unwrapArrayS1 str s1 s2 varMem arrMem =
-    match s1 with
+    match s2 with
     | [] -> []
-    | s::xt -> {variables = varMem; arrays = arrMem } :: unwrapArrayS1 str xt s2 varMem arrMem
+    | s::xt -> {variables = varMem; arrays = reAssignList arrMem str (s::s1)  } :: unwrapArrayS1 str s1 xt varMem arrMem
 
 let checkListCondition arr var expr =
     (not (Set.isEmpty (Set.intersect (Set.ofList [Zero;Positive]) (Set.ofList (abstract_arithmetic_semantics var arr expr))))) 
