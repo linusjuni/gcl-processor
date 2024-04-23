@@ -8,28 +8,28 @@ open Compiler
 
 let abstract_power =
     Map.ofList [
-        (Negative, Negative), [Negative; Positive];
+        (Negative, Negative), List.Empty;
         (Negative, Zero), [Positive];
         (Negative, Positive), [Negative; Positive];
         (Zero, Negative), List.Empty;
         (Zero, Zero), [Positive];
         (Zero, Positive), [Zero];
-        (Positive, Negative), [Positive];
+        (Positive, Negative), List.Empty;
         (Positive, Zero), [Positive];
         (Positive, Positive), [Positive]
-
     ]
+
 let abstract_divison  =
         Map.ofList [
         ((Negative,Negative), [Positive; Zero]);
         ((Negative,Zero), List.empty);
-        ((Negative,Positive), [Negative]);
+        ((Negative,Positive), [Negative;Zero]);
 
         ((Zero,Negative), [Zero]);
         ((Zero,Zero),  List.empty);
         ((Zero,Positive), [Zero]);
 
-        ((Positive,Negative), [Negative]);
+        ((Positive,Negative), [Negative;Zero]);
         ((Positive,Zero), List.empty);
         ((Positive,Positive), [Positive; Zero]);
     ]
@@ -46,7 +46,6 @@ let abstract_plus  =
         ((Positive,Negative), [Negative;Zero;Positive]);
         ((Positive,Zero), [Positive]);
         ((Positive,Positive), [Positive]);
-
     ]
 let abstract_multiplication =
     Map.ofList [
@@ -322,13 +321,20 @@ let rec arithmeticSemantics (str : string) (expr: expr) (M:List<SignMemory>) acc
         let s = (abstract_arithmetic_semantics varMem arrayMem expr)
         let findNewVarMem = unwrapS str s varMem arrayMem
         arithmeticSemantics str expr xt (acc @ findNewVarMem)
-        
+
+(*let checkListCondition mem expr1 epxr2 str =
+    not (Set.isEmpty (Set.intersect (Set.ofList [Zero,Positive]) (Set.ofList (semantics  ))))
+
+let rec listSemantics str expr1 expr2 M acc =
+    match M with
+    | [] -> acc
+*)
 let semantics (edgeaction:Label) (M:List<SignMemory>) = 
     match edgeaction with 
     |CommandSkipLabel -> M
     |BoolLabel(b) -> boolSemantics b M
     |CommandAssignmentLabel (s,e) -> arithmeticSemantics s e M []
-    | _ -> failwith "error"
+    |CommandListAssignmentLabel (s,e1,e2) -> failwith "error"
 
 let updateValue key value map =
     map |> Map.remove key |> Map.add key value
