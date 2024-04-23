@@ -18,7 +18,6 @@ let abstract_power =
         (Positive, Zero), [Positive];
         (Positive, Positive), [Positive]
     ]
-
 let abstract_divison  =
         Map.ofList [
         ((Negative,Negative), [Positive; Zero]);
@@ -170,7 +169,6 @@ let abstract_OrSC =
         ((false, true),         [true]);
         ((false, false),        [false]);
     ]
-
 let abstract_Or = 
     Map.ofList [
         ((true, true),          [true]);
@@ -288,12 +286,7 @@ let rec abstract_boolean_semantics (variableMemory:Map<Variable,Sign>) arrayMemo
                             (abstract_boolean_semantics variableMemory arrayMemory b1)
                             (abstract_boolean_semantics variableMemory arrayMemory b2)
                             (abstract_And)
-
-    |Not b1 -> List.collect (fun truthValue ->
-                                match truthValue with
-                                |true -> [false]
-                                |false -> [true]
-                            ) (abstract_boolean_semantics variableMemory arrayMemory b1)
+    |Not b1 -> List.map (fun truthValue -> not truthValue) (abstract_boolean_semantics variableMemory arrayMemory b1)
 
 let rec checkOneMemory action (memory:SignMemory) =
     match memory with
