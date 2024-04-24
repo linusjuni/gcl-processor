@@ -395,10 +395,10 @@ let rec worklistAlgo edges map worklist =
 let analysis (input: Input) : Output =
     match parse Grammar.start_command input.commands with
     | Ok ast -> 
-        let compiler_output = Compiler.analysis { 
+        let compiler_output = analysis { 
             commands = input.commands
             determinism = input.determinism} 
-        let edges, _ = Compiler.edges ast "qS" "qF" 0 input.determinism
+        let edges, _ = edges ast "qS" "qF" 0 input.determinism
         let node = worklistAlgo edges (Map.empty.Add ("qS", [input.assignment])) (Set.ofList ["qS"])
         { dot = compiler_output.dot
           final_node = "qS"
