@@ -303,6 +303,7 @@ let rec boolSemantics (action : bool) (M:List<SignMemory>) =
 
 let reAssignVariable (variableMemory : Map<Variable, Sign>) variable (signs : Sign) =
     variableMemory |> Map.remove variable |> Map.add variable signs
+
 let reAssignList (arrayMemory : Map<Array, List<Sign>>) variable (signs : List<Sign>) =
     arrayMemory |> Map.remove variable |> Map.add variable signs
 
@@ -318,12 +319,28 @@ let rec arithmeticSemantics (str : string) (expr: expr) (M:List<SignMemory>) acc
         let s = (abstract_arithmetic_semantics varMem arrayMem expr)
         let findNewVarMem = unwrapS str s varMem arrayMem
         arithmeticSemantics str expr xt (acc @ findNewVarMem)
-(*let rec unwrapArrayS2 *)
 
-let rec unwrapArrayS1 str s1 s2 varMem arrMem =
+let rec unwrapArrayS1 str (s1 : List<Sign>) (s2:List<Sign>) varMem arrMem =
     match s2 with
     | [] -> []
-    | s::xt -> {variables = varMem; arrays = reAssignList arrMem str (s::s1)  } :: unwrapArrayS1 str s1 xt varMem arrMem
+    | s::xt -> {variables = varMem; arrays = reAssignList arrMem str (s :: s1) } :: unwrapArrayS1 str s1 xt varMem arrMem
+
+let rec unwrapArrayS2 str (s1 : List<Sign>) (s2 : List<Sign>) varMem arrMem =
+    let rec loop1 s1 =
+        match s1 with
+        | [] -> []
+        | s1Head::s1Tail ->
+            let rec loop2 s2 =
+                match s2 with
+                | [] -> []
+                | s2Head::s2Tail ->
+                    let newSignMemory =
+                        { variables = varMem
+                          arrays = reAssignList arrMem str (s2Head::s1Tail) }
+                    newSignMemory :: loop2 s2Tail
+            loop2 s2 @ loop1 s1Tail
+    loop1 s1
+
 
 let checkListCondition arr var expr =
     (not (Set.isEmpty (Set.intersect (Set.ofList [Zero;Positive]) (Set.ofList (abstract_arithmetic_semantics var arr expr))))) 
@@ -334,8 +351,9 @@ let rec listSemantics str expr1 expr2 M acc =
     | {variables = varMem; arrays = arrayMem}::xt when (checkListCondition arrayMem varMem expr1) -> 
         let s1 = Map.find str arrayMem
         let s2 = abstract_arithmetic_semantics varMem arrayMem expr2
-        let newArrayMem = unwrapArrayS1 str s1 s2 varMem arrayMem
-        listSemantics str expr1 expr2 xt (acc @ newArrayMem)
+        let newArrayMem1 = unwrapArrayS1 str s1 s2 varMem arrayMem
+        let newArrayMem2 = unwrapArrayS2 str s1 s2 varMem arrayMem
+        listSemantics str expr1 expr2 xt (acc @ newArrayMem1 @ newArrayMem2)
     | {variables = varMem; arrays = arrayMem}::xt -> listSemantics str expr1 expr2 xt acc
 
 let semantics (edgeaction:Label) (M:List<SignMemory>) = 
