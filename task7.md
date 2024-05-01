@@ -34,4 +34,4 @@ Rules are indicated in the file. There is only one part of the code that you can
 
 ## Feedback & Evaluation
 
-Besides using MOKA, we encourage you to proactively ask for feedback from the TAs and the teacher.
+Besides using [MOKA](https://chip-pv.netlify.app/moka), we encourage you to proactively ask for feedback from the TAs and the teacher.
