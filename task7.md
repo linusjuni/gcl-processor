@@ -18,8 +18,6 @@ The goal of this task is to apply your knowledge about model checking and concur
 >
 > `task7/part1.gcl`
 
-In
-
 You should use [MOKA](https://chip-pv.netlify.app/moka) to develop and check your solutions.
 
 Your goal is to satisfy as many of the requirements (checked LTL formulas) as possible.
