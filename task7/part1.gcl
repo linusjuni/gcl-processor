@@ -4,11 +4,12 @@
 par
 
 // Thread modelling a client. You are not allowed to change it.
-do true -> 
-  if 
+do true ->
+  if
   coin_inserted = 0 -> coin_inserted := 1
-  []
-  selected = 0 -> selected := 1 
+  fi ;
+  if
+  selected = 0 -> selected := 1
   []
   selected = 0 -> selected := 2
   []
