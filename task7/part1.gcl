@@ -1,0 +1,48 @@
+// You are allowed to add more variables here
+> coin_inserted = 0
+
+par
+
+// Thread modelling a client. You are not allowed to change it.
+do true ->
+  if
+  coin_inserted = 0 -> coin_inserted := 1
+  fi ;
+  if
+  selected = 0 -> selected := 1
+  []
+  selected = 0 -> selected := 2
+  []
+  selected = 0 -> selected := 3
+  fi
+od
+
+// Thread implementing the vending machine controller.
+[]
+  // TODO: replace skip by code controlling the vending machine
+  //       the code must fulfill the below LTL requirements
+  skip 
+
+rap
+
+// Do not modify 
+check init ==>
+         coin_inserted = 0
+       & selected = 0
+       & serve_coffee = 0
+       & serve_tea = 0
+       & serve_water = 0
+check G (coin_inserted = 1 ==> F coin_inserted = 0)
+check G (selected = 1 & coin_inserted = 1 ==> F serve_coffee = 1)
+check G (selected = 2 & coin_inserted = 1 ==> F serve_tea = 1)
+check G (selected = 3 & coin_inserted = 1 ==> F serve_water = 1)
+check ! F G serve_coffee = 1 
+check ! F G serve_tea = 1 
+check ! F G serve_water = 1 
+check G serve_coffee + serve_tea + serve_water < 2
+check G (serve_coffee = 1 
+         ==> ( (G serve_tea = 0)
+               | (serve_tea = 0 U serve_water = 1)))
+check G (serve_tea = 1 
+         ==> ( (G serve_coffee = 0)
+               | (serve_coffee = 0 U serve_water = 1)))
