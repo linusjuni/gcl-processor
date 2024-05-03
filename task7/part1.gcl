@@ -1,5 +1,10 @@
 // You are allowed to add more variables here
 > coin_inserted = 0
+> selected = 0
+> serve_coffee = 0
+> serve_tea = 0
+> serve_water = 0
+> last_served = 0 // 1 for coffee, 2 for tea, 3 for water, 0 for none
 
 par
 
@@ -19,9 +24,45 @@ od
 
 // Thread implementing the vending machine controller.
 []
-  // TODO: replace skip by code controlling the vending machine
-  //       the code must fulfill the below LTL requirements
-  skip 
+
+    do true ->
+    if coin_inserted = 1 ->
+
+        if selected = 3 ->
+            serve_water := 1;
+            last_served := 0
+        [] selected = 1 & (last_served = 0 | last_served = 1) -> 
+            serve_coffee := 1;
+            last_served := 1
+        [] selected = 2 & (last_served = 0 | last_served = 2) -> 
+            serve_tea := 1;
+            last_served := 2 
+
+        [] selected = 1 & last_served = 2 -> 
+            serve_water := 1; // Flush with water
+            serve_water := 0;
+
+            serve_coffee := 1; // serve the coffee
+            last_served := 1
+        [] selected = 2 & last_served = 1 ->
+            serve_water := 1; // Flush with water
+            serve_water := 0;
+
+            serve_tea := 1; // serve the coffee
+            last_served := 2
+        fi;
+
+        // Reset coin insertion and selected states
+        selected := 0;
+        serve_coffee := 0;
+        serve_tea := 0;
+        serve_water := 0;
+        
+
+        
+        coin_inserted := 0
+    fi
+    od
 
 rap
 
