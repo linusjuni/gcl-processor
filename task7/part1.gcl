@@ -46,3 +46,8 @@ check G (serve_coffee = 1
 check G (serve_tea = 1 
          ==> ( (G serve_coffee = 0)
                | (serve_coffee = 0 U serve_water = 1)))
+check G (F ((F serve_coffee = 1) ==> selected = 1))
+check G (F ((F serve_tea = 1) ==> selected = 2))
+check G (selected = 1 & coin_inserted = 1 ==> F serve_coffee = 1 & F selected = 0)
+check G (selected = 2 & coin_inserted = 1 ==> F serve_tea = 1 & F selected = 0)
+check G (selected = 3 & coin_inserted = 1 ==> F serve_water = 1 & F selected = 0)
